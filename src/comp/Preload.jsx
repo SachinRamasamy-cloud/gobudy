@@ -29,7 +29,7 @@ export default function Preload() {
             }}
           />
           <img
-            src="/logo1-removebg-preview.png"
+            src={`${import.meta.env.BASE_URL}/logo1-removebg-preview.png`}
             alt="Gobudy"
             className="w-24 h-24 relative z-10 drop-shadow-xl"
           />

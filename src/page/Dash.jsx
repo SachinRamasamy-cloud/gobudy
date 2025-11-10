@@ -10,7 +10,7 @@ export default function Dash() {
     const scroll = (offset) => {
         scrollgm.current.scrollBy({
             left: offset,
-            behavior: "smooth", 
+            behavior: "smooth",
         });
     };
     const gmcards = [
@@ -64,7 +64,7 @@ export default function Dash() {
                     playsInline
                     className="absolute inset-0 w-full h-full object-cover opacity-70"
                 >
-                    <source src="/videos/37585-414024825_medium.mp4" type="video/mp4" />
+                    <source src={`${import.meta.env.BASE_URL}videos/37585-414024825_medium.mp4`} type="video/mp4" />
                 </video>
 
                 <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black" />
@@ -201,7 +201,7 @@ export default function Dash() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-8 py-8 justify-items-center">
 
-    <div className="group w-full max-w-[404px] bg-[#111827] rounded-xl overflow-hidden shadow-lg border border-gray-800 transition-all hover:shadow-red-500/20 hover:scale-105 duration-300">
+                    <div className="group w-full max-w-[404px] bg-[#111827] rounded-xl overflow-hidden shadow-lg border border-gray-800 transition-all hover:shadow-red-500/20 hover:scale-105 duration-300">
                         <div className="relative overflow-hidden">
                             <img
                                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3cjF8yqeUhb0YcGr959-N3hfuGyTwIzwmSw&s"
@@ -243,8 +243,8 @@ export default function Dash() {
                             </button>
                         </div>
                     </div>
-                
-    <div className="group w-full max-w-[404px] bg-[#111827] rounded-xl overflow-hidden shadow-lg border border-gray-800 transition-all hover:shadow-red-500/20 hover:scale-105 duration-300">
+
+                    <div className="group w-full max-w-[404px] bg-[#111827] rounded-xl overflow-hidden shadow-lg border border-gray-800 transition-all hover:shadow-red-500/20 hover:scale-105 duration-300">
                         <div className="relative overflow-hidden">
                             <img
                                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3cjF8yqeUhb0YcGr959-N3hfuGyTwIzwmSw&s"
@@ -286,8 +286,8 @@ export default function Dash() {
                             </button>
                         </div>
                     </div>
-                
-    <div className="group w-full max-w-[404px] bg-[#111827] rounded-xl overflow-hidden shadow-lg border border-gray-800 transition-all hover:shadow-red-500/20 hover:scale-105 duration-300">
+
+                    <div className="group w-full max-w-[404px] bg-[#111827] rounded-xl overflow-hidden shadow-lg border border-gray-800 transition-all hover:shadow-red-500/20 hover:scale-105 duration-300">
                         <div className="relative overflow-hidden">
                             <img
                                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3cjF8yqeUhb0YcGr959-N3hfuGyTwIzwmSw&s"
@@ -329,8 +329,8 @@ export default function Dash() {
                             </button>
                         </div>
                     </div>
-                
-    <div className="group w-full max-w-[404px] bg-[#111827] rounded-xl overflow-hidden shadow-lg border border-gray-800 transition-all hover:shadow-red-500/20 hover:scale-105 duration-300">
+
+                    <div className="group w-full max-w-[404px] bg-[#111827] rounded-xl overflow-hidden shadow-lg border border-gray-800 transition-all hover:shadow-red-500/20 hover:scale-105 duration-300">
                         <div className="relative overflow-hidden">
                             <img
                                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3cjF8yqeUhb0YcGr959-N3hfuGyTwIzwmSw&s"
@@ -372,8 +372,8 @@ export default function Dash() {
                             </button>
                         </div>
                     </div>
-                
-    <div className="group w-full max-w-[404px] bg-[#111827] rounded-xl overflow-hidden shadow-lg border border-gray-800 transition-all hover:shadow-red-500/20 hover:scale-105 duration-300">
+
+                    <div className="group w-full max-w-[404px] bg-[#111827] rounded-xl overflow-hidden shadow-lg border border-gray-800 transition-all hover:shadow-red-500/20 hover:scale-105 duration-300">
                         <div className="relative overflow-hidden">
                             <img
                                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3cjF8yqeUhb0YcGr959-N3hfuGyTwIzwmSw&s"
@@ -415,10 +415,10 @@ export default function Dash() {
                             </button>
                         </div>
                     </div>
-                
+
                 </div>
             </div >
         </>
     );
-}  
+}
 

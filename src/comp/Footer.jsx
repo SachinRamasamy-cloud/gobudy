@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
             <div className="flex items-center gap-2">
               <img
-                src="/logo1-removebg-preview.png"
+                src={`${import.meta.env.BASE_URL}/logo1-removebg-preview.png`}
                 alt="GoBudy Logo"
                 className="w-16 h-16"
               />

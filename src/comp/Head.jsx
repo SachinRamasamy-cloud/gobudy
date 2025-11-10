@@ -19,7 +19,7 @@ export default function Head({ setIsOpen }) {
 
                         {/* Logo */}
                         <div className="flex items-center gap-2">
-                            <img src="/logo1-removebg-preview.png" className="w-8 h-8" alt="" />
+                            <img src={`${import.meta.env.BASE_URL}/logo1-removebg-preview.png`} className="w-8 h-8" alt="" />
                             <h1 className="text-2xl font-extrabold tracking-wide text-white">
                                 Go<span className="text-red-600 drop-shadow-[0_0_10px_#ff0000]">Budy</span>
                             </h1>

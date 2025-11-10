@@ -62,8 +62,8 @@ export default function Dash() {
                     loop
                     playsInline
                     className="absolute inset-0 w-full h-full object-cover opacity-70"
-                >
-                    <source src="/videos/37585-414024825_medium.mp4" type="video/mp4" />
+                ><source src={`${import.meta.env.BASE_URL}videos/37585-414024825_medium.mp4`} type="video/mp4" />
+
                 </video>
 
                 <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black" />

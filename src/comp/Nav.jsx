@@ -12,6 +12,7 @@ export default function Nav({ isOpen, setIsOpen }) {
     { name: "Featured Games", icon: "fa-solid fa-gamepad", path: "/featured-games" },
     { name: "Tournaments", icon: "fa-solid fa-trophy", path: "/tournaments" },
     { name: "Best Players", icon: "fa-solid fa-users", path: "/best-players" },
+     { name: "Add Balance", icon: "fa-solid fa-wallet", path: "/add-balance" },
     { name: "Top Videos", icon: "fa-solid fa-video", path: "/top-videos" },
     { name: "Reels", icon: "fa-solid fa-film", path: "/reels" },
     { name: "Join Match", icon: "fa-solid fa-handshake", path: "/join-match" },

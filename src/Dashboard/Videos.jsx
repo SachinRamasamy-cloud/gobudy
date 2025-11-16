@@ -1,159 +1,6 @@
-// import React from 'react'
 
-// export default function Videos() {
-//     return (
-//         <div className=" py-4 bg-black">
-//             {/* head */}
-//             <div className="flex flex-row items-start md:items-center justify-between py-4 px-6 md:px-10 gap-4">
-//                 {/* title */}
-//                 <div>
-//                     <h1 className="text-2xl md:text-4xl font-extrabold text-white tracking-tight">
-//                         Featured
-//                         <span className="ml-2 text-red-600 drop-shadow-[0_0_8px_rgba(255,0,0,0.7)]">
-//                             Videos
-//                         </span>
-//                     </h1>
-//                     <p className="mt-2 text-gray-400 text-sm md:text-base max-w-md">
-//                         Join upcoming tournaments and compete for prizes
-//                     </p>
-//                 </div>
-//             </div>
-//             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-8 py-8 justify-items-center">
-
-//                 <div className="group w-full max-w-[404px] rounded-xl overflow-hidden transition-all duration-300">
-//                     <div className="relative overflow-hidden">
-//                         <img
-//                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3cjF8yqeUhb0YcGr959-N3hfuGyTwIzwmSw&s"
-//                             alt="Valorant Tournament"
-//                             className="w-full h-[200px] object-cover transform transition-transform duration-500 group-hover:scale-110 rounded-xl"
-//                         />
-//                         <div className="absolute bottom-1 right-3">
-//                             <span className="bg-black/70 text-white text-sm font-semibold px-3 py-1 rounded-md shadow">
-//                                 12.45
-//                             </span>
-//                         </div>
-//                     </div>
-
-//                     {/* content section */}
-//                     <div className="p-5 space-y-4">
-//                         <div>
-//                             <h2 className="text-xl font-semibold text-white">
-//                                 Summer Championship
-//                             </h2>
-//                             <div className="flex items-center gap-2 text-gray-400 text-sm mt-1">
-//                                 <i className="fa-regular fa-calendar"></i>
-//                                 <span>Aug 15, 2025</span>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-//                 <div className="group w-full max-w-[404px] rounded-xl overflow-hidden transition-all duration-300">
-//                     <div className="relative overflow-hidden rounded-xl">
-//                         {/* Image */}
-//                         <img
-//                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3cjF8yqeUhb0YcGr959-N3hfuGyTwIzwmSw&s"
-//                             alt="Valorant Tournament"
-//                             className="w-full h-[200px] object-cover transform transition-transform duration-500 group-hover:scale-110"
-//                         />
-//                         {/* Play Button Overlay */}
-//                         <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-//                             <button className="w-14 h-14 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg flex items-center justify-center transition-transform duration-300 transform scale-90 group-hover:scale-100">
-//                                 <i className="fa-solid fa-play text-xl"></i>
-//                             </button>
-//                         </div>
-
-
-//                         {/* Bottom Right Duration Label */}
-//                         <div className="absolute bottom-2 right-3">
-//                             <span className="bg-black/70 text-white text-sm font-semibold px-3 py-1 rounded-md shadow">
-//                                 12:45
-//                             </span>
-//                         </div>
-//                     </div>
-
-//                     {/* Content Section */}
-//                     <div className="p-5 space-y-3">
-//                         <div>
-//                             <h2 className="text-xl font-semibold text-white">
-//                                 Summer Championship
-//                             </h2>
-//                             <div className="flex items-center gap-2 text-gray-400 text-sm mt-1">
-//                                 <i className="fa-regular fa-calendar"></i>
-//                                 <span>Aug 15, 2025</span>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-//                 <div className="group w-full max-w-[404px] rounded-xl overflow-hidden transition-all duration-300">
-//                     <div className="relative overflow-hidden">
-//                         <img
-//                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3cjF8yqeUhb0YcGr959-N3hfuGyTwIzwmSw&s"
-//                             alt="Valorant Tournament"
-//                             className="w-full h-[200px] object-cover transform transition-transform duration-500 group-hover:scale-110 rounded-xl"
-//                         />
-//                         <div className="absolute bottom-1 right-3">
-//                             <span className="bg-black/70 text-white text-sm font-semibold px-3 py-1 rounded-md shadow">
-//                                 12.45
-//                             </span>
-//                         </div>
-//                     </div>
-
-//                     {/* content section */}
-//                     <div className="p-5 space-y-4">
-//                         <div>
-//                             <h2 className="text-xl font-semibold text-white">
-//                                 Summer Championship
-//                             </h2>
-//                             <div className="flex items-center gap-2 text-gray-400 text-sm mt-1">
-//                                 <i className="fa-regular fa-calendar"></i>
-//                                 <span>Aug 15, 2025</span>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-//                 <div className="group w-full max-w-[404px] rounded-xl overflow-hidden transition-all duration-300">
-//                     <div className="relative overflow-hidden rounded-xl">
-//                         {/* Image */}
-//                         <img
-//                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3cjF8yqeUhb0YcGr959-N3hfuGyTwIzwmSw&s"
-//                             alt="Valorant Tournament"
-//                             className="w-full h-[200px] object-cover transform transition-transform duration-500 group-hover:scale-110"
-//                         />
-//                         {/* Play Button Overlay */}
-//                         <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-//                             <button className="w-14 h-14 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg flex items-center justify-center transition-transform duration-300 transform scale-90 group-hover:scale-100">
-//                                 <i className="fa-solid fa-play text-xl"></i>
-//                             </button>
-//                         </div>
-
-
-//                         {/* Bottom Right Duration Label */}
-//                         <div className="absolute bottom-2 right-3">
-//                             <span className="bg-black/70 text-white text-sm font-semibold px-3 py-1 rounded-md shadow">
-//                                 12:45
-//                             </span>
-//                         </div>
-//                     </div>
-
-//                     {/* Content Section */}
-//                     <div className="p-5 space-y-3">
-//                         <div>
-//                             <h2 className="text-xl font-semibold text-white">
-//                                 Summer Championship
-//                             </h2>
-//                             <div className="flex items-center gap-2 text-gray-400 text-sm mt-1">
-//                                 <i className="fa-regular fa-calendar"></i>
-//                                 <span>Aug 15, 2025</span>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-
-//             </div>
-//         </div >
-//     )
-// }
 import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const ACCENT = "#E50914"; // red accent
 const SECONDARY = "#3B82F6"; // blue secondary
@@ -192,7 +39,6 @@ const videos = [
     src: "https://www.w3schools.com/html/mov_bbb.mp4",
     tag: "GUIDE",
   },
-  // add more items as needed
 ];
 
 export default function Videos() {
@@ -216,188 +62,235 @@ export default function Videos() {
 
   return (
     <section
-      className="py-6"
+      className="py-16 px-6 md:px-10"
       style={{ background: BG }}
       aria-labelledby="videos-heading"
     >
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 py-6 px-6 md:px-10">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+        className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12"
+      >
         <div>
+          <p className="text-[#00e5ff] text-sm font-semibold uppercase tracking-widest mb-2">Trending Now</p>
           <h2
             id="videos-heading"
-            className="text-2xl md:text-4xl font-extrabold text-white tracking-tight"
+            className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-tight"
           >
             Featured
             <span
-              className="ml-2"
+              className="ml-3"
               style={{
                 color: ACCENT,
-                textShadow: "0 0 10px rgba(229,9,20,0.6)",
+                textShadow: "0 0 20px rgba(229,9,20,0.5)",
               }}
             >
               Videos
             </span>
           </h2>
-          <p className="mt-2 text-gray-400 text-sm md:text-base max-w-md">
+          <p className="mt-3 text-gray-400 text-sm md:text-base max-w-2xl">
             Join upcoming tournaments, study top plays, and watch match highlights.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <a
-            href="#all-videos"
-            className="text-sm text-white/80 px-3 py-2 rounded-md border border-white/6 hover:bg-white/3 transition"
+          <motion.a
+            href="#/all-video"
+            whileHover={{ scale: 1.05, x: 5 }}
+            whileTap={{ scale: 0.95 }}
+            className="text-sm text-white/90 px-5 py-2.5 rounded-lg border border-white/20 hover:border-[#e50914] hover:bg-white/5 transition-all font-semibold"
           >
             View all
-          </a>
-          <a
+          </motion.a>
+          <motion.a
             href="#submit"
-            className="text-sm text-white px-3 py-2 rounded-md"
+            whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(229,9,20,0.5)" }}
+            whileTap={{ scale: 0.95 }}
+            className="text-sm text-white px-5 py-2.5 rounded-lg font-bold"
             style={{
               background: `linear-gradient(90deg, ${ACCENT}, rgba(229,9,20,0.85))`,
-              boxShadow: `0 8px 30px rgba(229,9,20,0.14)`,
+              boxShadow: `0 0 15px rgba(229,9,20,0.3)`,
             }}
           >
             Submit Clip
-          </a>
+          </motion.a>
         </div>
-      </div>
+      </motion.div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-6 md:px-10 pb-10 justify-items-center">
-        {videos.map((v) => (
-          <article
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+        {videos.map((v, i) => (
+          <motion.article
             key={v.id}
-            className="group w-full max-w-[404px] rounded-xl overflow-hidden transform transition-all duration-300"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: i * 0.1 }}
+            viewport={{ once: true }}
+            whileHover={{ scale: 1.04, translateY: -8 }}
+            className="group w-full rounded-2xl overflow-hidden transform transition-all duration-300 cursor-pointer"
             aria-labelledby={`video-${v.id}-title`}
           >
-            <div className="relative overflow-hidden rounded-xl bg-black/20">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-gray-900/80 to-gray-950/80 border border-white/10 hover:border-[#e50914]/50 shadow-[0_0_30px_rgba(0,0,0,0.4)] transition-all">
               {/* thumbnail */}
-              <img
+              <motion.img
                 src={v.thumb}
                 alt={`${v.title} thumbnail`}
                 loading="lazy"
                 onError={onImgError}
-                className="w-full h-[220px] object-cover transition-transform duration-500 group-hover:scale-110"
+                className="w-full h-[240px] object-cover transition-transform duration-500"
+                whileHover={{ scale: 1.1 }}
+                transition={{ duration: 0.4 }}
               />
 
+              {/* Dark overlay */}
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-gray-950/60"></div>
+
               {/* top-left tag */}
-              <div
-                className="absolute left-3 top-3 px-3 py-1 rounded-md text-xs font-semibold"
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 + 0.2 }}
+                viewport={{ once: true }}
+                className="absolute left-4 top-4 px-4 py-2 rounded-lg text-xs font-bold"
                 style={{
                   background: `linear-gradient(90deg, ${ACCENT}, rgba(229,9,20,0.95))`,
                   color: "white",
-                  boxShadow: "0 6px 24px rgba(229,9,20,0.12)",
+                  boxShadow: "0 0 12px rgba(229,9,20,0.6)",
                 }}
               >
                 {v.tag}
-              </div>
+              </motion.div>
 
               {/* center play */}
               <div
-                className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:bg-black/20 transition-all duration-300"
                 aria-hidden
               >
-                <button
+                <motion.button
                   type="button"
                   onClick={() => openVideo(v)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") openVideo(v);
                   }}
-                  className="pointer-events-auto w-14 h-14 rounded-full flex items-center justify-center text-white shadow-lg transition transform scale-95 group-hover:scale-105 focus:outline-none"
+                  className="pointer-events-auto w-16 h-16 rounded-full flex items-center justify-center text-white shadow-lg transition transform scale-75 group-hover:scale-100 focus:outline-none"
                   style={{
-                    background: ACCENT,
-                    boxShadow: `0 12px 40px rgba(229,9,20,0.2)`,
+                    background: `linear-gradient(135deg, ${ACCENT}, rgba(229,9,20,0.85))`,
+                    boxShadow: `0 0 25px rgba(229,9,20,0.5)`,
                   }}
                   aria-label={`Play ${v.title}`}
+                  whileHover={{ scale: 1.15 }}
+                  whileTap={{ scale: 0.9 }}
                 >
-                  <i className="fa-solid fa-play" />
-                </button>
+                  <i className="fa-solid fa-play ml-1 text-lg" />
+                </motion.button>
               </div>
 
               {/* bottom-right duration */}
-              <div className="absolute bottom-3 right-3">
-                <span className="bg-black/70 text-white text-sm font-semibold px-3 py-1 rounded-md shadow">
-                  {v.duration}
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: i * 0.1 + 0.3 }}
+                viewport={{ once: true }}
+                className="absolute bottom-4 right-4"
+              >
+                <span className="bg-black/80 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-lg border border-white/10">
+                  ⏱️ {v.duration}
                 </span>
-              </div>
-
-              {/* subtle gradient overlay for legibility */}
-              <div
-                className="absolute inset-0 pointer-events-none"
-                aria-hidden
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(0,0,0,0.0) 40%, rgba(0,0,0,0.45) 100%)",
-                }}
-              />
+              </motion.div>
             </div>
 
             {/* content */}
-            <div className="p-5 space-y-3 bg-transparent">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: i * 0.1 + 0.35 }}
+              viewport={{ once: true }}
+              className="p-6 space-y-4 bg-gradient-to-b from-gray-900/40 to-gray-950/40 backdrop-blur-sm"
+            >
               <h3
                 id={`video-${v.id}-title`}
-                className="text-xl font-semibold text-white"
+                className="text-lg font-bold text-white leading-snug group-hover:text-[#e50914] transition-colors"
               >
                 {v.title}
               </h3>
 
-              <div className="flex items-center gap-3 text-sm text-gray-400">
-                <span
-                  className="flex items-center gap-2"
-                  style={{ color: "rgba(255,255,255,0.85)" }}
-                >
-                  <i className="fa-regular fa-calendar" style={{ color: SECONDARY }} />
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: i * 0.1 + 0.4 }}
+                viewport={{ once: true }}
+                className="flex items-center justify-between gap-2 text-xs text-gray-300 pt-2"
+              >
+                <span className="flex items-center gap-2 font-medium">
+                  <i className="fa-regular fa-calendar" style={{ color: "#00e5ff" }} />
                   <span className="text-white/80">{v.date}</span>
                 </span>
 
-                <span className="ml-auto text-xs text-white/50 hidden sm:inline">
-                  {/* example metadata */}
-                  24.8k views
+                <span className="hidden sm:flex items-center gap-1 text-[#00e5ff] font-semibold">
+                  <i className="fa-solid fa-eye text-xs" /> 24.8k
                 </span>
-              </div>
-            </div>
-          </article>
+              </motion.div>
+            </motion.div>
+          </motion.article>
         ))}
       </div>
 
       {/* Video Modal */}
-      {active && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={`Playing ${active.title}`}
-          className="fixed inset-0 z-50 flex items-center justify-center p-6"
-        >
-          <div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-            onClick={closeVideo}
-          />
-          <div className="relative w-full max-w-3xl mx-auto rounded-xl overflow-hidden shadow-2xl bg-black">
-            <header className="flex items-center justify-between px-4 py-2 border-b border-white/6">
-              <h4 className="text-white font-semibold">{active.title}</h4>
-              <button
-                onClick={closeVideo}
-                aria-label="Close player"
-                className="text-white/90 p-2 rounded hover:bg-white/5 focus:outline-none"
-              >
-                <i className="fa-solid fa-xmark" />
-              </button>
-            </header>
+      <AnimatePresence>
+        {active && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Playing ${active.title}`}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6"
+          >
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/80 backdrop-blur-md"
+              onClick={closeVideo}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ duration: 0.3 }}
+              className="relative w-full max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-b from-gray-900 to-gray-950 border border-white/10"
+            >
+              <header className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-gradient-to-r from-gray-900/60 to-gray-950/60 backdrop-blur-sm">
+                <h4 className="text-white font-bold text-lg">{active.title}</h4>
+                <motion.button
+                  onClick={closeVideo}
+                  aria-label="Close player"
+                  className="text-white/90 p-2 rounded-lg hover:bg-white/10 hover:text-[#e50914] transition-all font-bold"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <i className="fa-solid fa-xmark text-lg" />
+                </motion.button>
+              </header>
 
-            <div className="bg-black">
-              <video
-                src={active.src}
-                controls
-                autoPlay
-                className="w-full h-[60vh] bg-black object-cover"
-              >
-                Sorry, your browser doesn't support embedded videos.
-              </video>
-            </div>
-          </div>
-        </div>
-      )}
+              <div className="bg-black relative">
+                <video
+                  src={active.src}
+                  controls
+                  autoPlay
+                  className="w-full h-[50vh] md:h-[70vh] bg-black object-cover"
+                >
+                  Sorry, your browser doesn't support embedded videos.
+                </video>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

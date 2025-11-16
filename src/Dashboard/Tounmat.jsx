@@ -120,96 +120,136 @@ export default function Tounmat() {
   return (
     <section className="py-16 px-6 md:px-10 bg-[#0d0d0d]">
       {/* HEADER + VIEW ALL */}
-      <div className="flex items-center justify-between mb-10">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white leading-tight">
-          Featured{" "}
-          <span className="text-[#e50914] drop-shadow-[0_0_8px_rgba(229,9,20,0.8)]">
-            Tournaments
-          </span>
-        </h2>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+        className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12"
+      >
+        <div>
+          <p className="text-[#00e5ff] text-sm font-semibold uppercase tracking-widest mb-2">Current Events</p>
+          <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-tight">
+            Featured{" "}
+            <span className="text-[#e50914] drop-shadow-[0_0_15px_rgba(229,9,20,0.6)]">
+              Tournaments
+            </span>
+          </h2>
+          <p className="mt-3 text-gray-400 text-sm max-w-2xl">Compete in the biggest esports tournaments with massive prize pools and real competition</p>
+        </div>
 
-        <button
-          className="
-    flex items-center justify-center
-    text-xs sm:text-sm font-semibold
-    px-1 sm:px-4 py-2 sm:py-2.5
-    rounded-lg
-    bg-#0d0d0d hover:bg-white/10
-    text-gray-300
-    border border-white/10
-    w-24 sm:w-auto
-    transition-all duration-200
-  "
+        <motion.button
+          whileHover={{ scale: 1.05, borderColor: "#e50914", boxShadow: "0 0 20px rgba(229,9,20,0.3)" }}
+          whileTap={{ scale: 0.95 }}
+          className="flex items-center justify-center gap-2 text-sm font-bold px-6 py-3 rounded-lg bg-transparent hover:bg-white/5 text-white border border-white/20 hover:border-[#e50914] transition-all whitespace-nowrap"
         >
           View All
-        </button>
-      </div>
+          <i className="fa-solid fa-arrow-right text-xs"></i>
+        </motion.button>
+      </motion.div>
 
       {/* GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
         {tournaments.map((t, i) => (
           <motion.div
             key={i}
-            whileHover={{ scale: 1.04, translateY: -6 }}
-            className="w-full rounded-xl overflow-hidden
-            bg-[#111]/60 backdrop-blur-xl
-            border border-white/10
-            shadow-[0_0_15px_rgba(0,0,0,0.5)]
-            transition-all"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: i * 0.1 }}
+            viewport={{ once: true }}
+            whileHover={{ scale: 1.04, translateY: -8 }}
+            className="w-full rounded-2xl overflow-hidden
+            bg-gradient-to-b from-gray-900/80 to-gray-950/80 backdrop-blur-xl
+            border border-white/10 hover:border-[#e50914]/50
+            shadow-[0_0_30px_rgba(0,0,0,0.4)]
+            transition-all duration-300"
           >
             {/* IMAGE */}
-            <div className="relative">
-              <img
+            <div className="relative overflow-hidden h-[240px]">
+              <motion.img
                 src={t.img}
                 alt={t.game}
-                className="w-full h-[200px] object-cover"
+                className="w-full h-full object-cover"
+                whileHover={{ scale: 1.1 }}
+                transition={{ duration: 0.4 }}
               />
 
+              {/* Dark Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-gray-950/60"></div>
+
               {/* GAME TAG */}
-              <span
-                className="absolute top-3 left-3 px-3 py-1 rounded-md text-sm font-semibold
-                bg-[#e50914] text-white shadow
-                drop-shadow-[0_0_8px_rgba(229,9,20,0.8)]"
+              <motion.span
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 + 0.2 }}
+                viewport={{ once: true }}
+                className="absolute top-4 left-4 px-4 py-2 rounded-lg text-xs font-bold
+                bg-gradient-to-r from-[#e50914] to-red-700 text-white shadow-lg
+                drop-shadow-[0_0_12px_rgba(229,9,20,0.6)]"
               >
                 {t.game}
-              </span>
+              </motion.span>
             </div>
 
             {/* CONTENT */}
-            <div className="p-5 space-y-3">
-              <h3 className="text-xl font-bold text-white">{t.title}</h3>
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: i * 0.1 + 0.25 }}
+              viewport={{ once: true }}
+              className="p-6 space-y-4"
+            >
+              <h3 className="text-xl font-bold text-white leading-snug">{t.title}</h3>
 
-              <p className="text-gray-300 text-sm flex items-center gap-2">
-                <i className="fa-regular fa-calendar text-[#00e5ff]"></i> {t.date}
-              </p>
+              <motion.p
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: i * 0.1 + 0.3 }}
+                viewport={{ once: true }}
+                className="text-gray-300 text-sm flex items-center gap-2 font-medium"
+              >
+                <i className="fa-regular fa-calendar text-[#00e5ff] text-xs"></i>
+                <span>{t.date}</span>
+              </motion.p>
 
-              <div className="flex justify-between mt-3 text-sm font-semibold">
-                <div>
-                  <p className="text-gray-400 mb-1">PRIZE POOL</p>
-                  <h4 className="text-[#00e5ff] text-lg">{t.prize}</h4>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 + 0.35 }}
+                viewport={{ once: true }}
+                className="grid grid-cols-2 gap-3 pt-2"
+              >
+                <div className="p-4 bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-xl border border-gray-700/50 hover:border-[#00e5ff]/30 transition-colors">
+                  <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1">Prize Pool</p>
+                  <h4 className="text-[#00e5ff] text-lg font-bold">{t.prize}</h4>
                 </div>
 
-                <div className="text-right">
-                  <p className="text-gray-400 mb-1">PARTICIPANTS</p>
-                  <h4 className="text-white text-lg">{t.participants}</h4>
+                <div className="p-4 bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-xl border border-gray-700/50 hover:border-white/30 transition-colors">
+                  <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1">Players</p>
+                  <h4 className="text-white text-lg font-bold">{t.participants}</h4>
                 </div>
-              </div>
+              </motion.div>
 
               {/* BUTTON */}
               <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="w-full py-2 mt-4 rounded-lg font-semibold
-                bg-[#e50914] text-white
-                hover:shadow-[0_0_18px_rgba(229,9,20,0.8)]
-                transition-all"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 + 0.4 }}
+                viewport={{ once: true }}
+                whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(229,9,20,0.6)" }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full py-3 mt-2 rounded-lg font-bold text-sm uppercase tracking-wider
+                bg-gradient-to-r from-[#e50914] to-red-700 text-white
+                hover:from-red-600 hover:to-red-800
+                shadow-[0_0_20px_rgba(229,9,20,0.3)]
+                transition-all duration-300"
               >
                 Join Tournament
               </motion.button>
-            </div>
+            </motion.div>
           </motion.div>
         ))}
       </div>
-    </section >
+    </section>
   );
 }

@@ -95,65 +95,91 @@ export default function PlayerCarousel() {
   return (
     <>
       {/* HEADER */}
-      <div className="flex items-center justify-between py-8 px-6 md:px-12">
-        <div>
-          <h2 className="text-2xl md:text-4xl font-extrabold text-white">
-            Top{" "}
-            <span className="text-[#e50914] drop-shadow-[0_0_8px_rgba(229,9,20,0.8)]">
-            Players
-            </span>
-          </h2>
-          <p className="hidden sm:block text-sm text-white/60 mt-2 max-w-xl">
-            Spotlight on top-tier competitors — stats, roles and playstyle breakdowns.
-          </p>
-        </div>
+      <section className="relative bg-[#0d0d0d] py-16 px-6 md:px-10 overflow-hidden">
+        {/* Animated background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-950/50 via-[#0d0d0d] to-gray-950/50 pointer-events-none" />
 
-        {/* CONTROLS */}
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => setAutoplay((s) => !s)}
-            aria-pressed={autoplay}
-            className="px-3 py-2 rounded-lg hidden sm:flex items-center gap-2 bg-black/40 border border-white/10 text-white text-sm
-              hover:bg-[#151515] focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:ring-offset-2 transition"
-            title={autoplay ? "Stop autoplay" : "Start autoplay"}
-          >
-            <i
-              className={`fa-solid ${autoplay ? "fa-pause" : "fa-play"}`}
-              style={{ color: "white" }}
-            />
-            <span className="hidden sm:inline">
-              {autoplay ? "Pause" : "Autoplay"}
-            </span>
-          </button>
-
-          <div className="flex gap-2">
-            <button
-              aria-label="Previous player"
-              onClick={prevPlayer}
-              className="w-12 h-12 rounded-xl bg-black/40 border border-white/10 flex items-center justify-center cursor-pointer
-                hover:bg-[#E50914] hover:border-[#E50914] hover:scale-105 transform transition-all focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:ring-offset-2"
-            >
-              <i className="fa-solid fa-chevron-left text-white" />
-            </button>
-
-            <button
-              aria-label="Next player"
-              onClick={nextPlayer}
-              className="w-12 h-12 rounded-xl bg-black/40 border border-white/10 flex items-center justify-center cursor-pointer
-                hover:bg-[#E50914] hover:border-[#E50914] hover:scale-105 transform transition-all focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:ring-offset-2"
-            >
-              <i className="fa-solid fa-chevron-right text-white" />
-            </button>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative z-10 flex items-center justify-between max-w-7xl mx-auto"
+        >
+          <div>
+            <p className="text-[#00e5ff] text-sm font-semibold uppercase tracking-widest mb-2">
+              🏆 Elite Competitors
+            </p>
+            <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-tight">
+              Top
+              <span className="ml-3 bg-gradient-to-r from-[#e50914] to-[#ff6b6b] bg-clip-text text-transparent">
+                Players
+              </span>
+            </h2>
+            <p className="hidden sm:block text-sm text-gray-400 mt-3 max-w-xl">
+              Spotlight on top-tier competitors — stats, roles and playstyle breakdowns.
+            </p>
           </div>
-        </div>
-      </div>
+
+          {/* CONTROLS */}
+          <motion.div
+            className="flex items-center gap-3 flex-shrink-0"
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <motion.button
+              type="button"
+              onClick={() => setAutoplay((s) => !s)}
+              aria-pressed={autoplay}
+              className="px-4 py-2 rounded-xl hidden sm:flex items-center gap-2 bg-gradient-to-br from-gray-800 to-gray-900 border border-white/20
+                hover:border-[#00e5ff]/50 text-white text-sm font-medium transition-all duration-300 group"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              title={autoplay ? "Stop autoplay" : "Start autoplay"}
+            >
+              <i
+                className={`fa-solid ${autoplay ? "fa-pause" : "fa-play"} group-hover:text-[#00e5ff] transition-colors`}
+              />
+              <span className="hidden sm:inline group-hover:text-[#00e5ff] transition-colors">
+                {autoplay ? "Pause" : "Autoplay"}
+              </span>
+            </motion.button>
+
+            <div className="flex gap-2">
+              <motion.button
+                aria-label="Previous player"
+                onClick={prevPlayer}
+                className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 border border-white/20 flex items-center justify-center cursor-pointer
+                  hover:border-[#e50914]/50 transition-all duration-300 group"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <i className="fa-solid fa-chevron-left text-white group-hover:text-[#e50914] transition-colors" />
+              </motion.button>
+
+              <motion.button
+                aria-label="Next player"
+                onClick={nextPlayer}
+                className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 border border-white/20 flex items-center justify-center cursor-pointer
+                  hover:border-[#e50914]/50 transition-all duration-300 group"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <i className="fa-solid fa-chevron-right text-white group-hover:text-[#e50914] transition-colors" />
+              </motion.button>
+            </div>
+          </motion.div>
+        </motion.div>
+      </section>
 
       {/* MAIN */}
       <section
-        className="w-full min-h-[70vh] flex items-center justify-center text-white relative overflow-hidden px-6 md:px-12 py-12"
+        className="relative w-full min-h-[70vh] flex items-center justify-center text-white overflow-hidden px-6 md:px-10 py-16 bg-[#0d0d0d]"
         aria-live="polite"
       >
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-950/30 via-[#0d0d0d] to-gray-950/30 pointer-events-none" />
+
         <AnimatePresence mode="wait">
           {!showDetail ? (
             <motion.div
@@ -162,7 +188,7 @@ export default function PlayerCarousel() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.45 }}
-              className="w-full max-w-[1300px] flex flex-col md:flex-row items-center gap-8"
+              className="relative z-10 w-full max-w-7xl flex flex-col md:flex-row items-center gap-12 md:gap-16"
             >
               {/* left: text */}
               <motion.div
@@ -172,86 +198,118 @@ export default function PlayerCarousel() {
                 transition={{ duration: 0.45 }}
                 className="w-full md:w-1/2 text-center md:text-left"
               >
-                <div className="flex items-center gap-3">
-                  <span
-                    className="px-3 py-1 rounded-full text-xs font-semibold"
-                    style={{
-                      background: `linear-gradient(90deg, ${ACCENT}, rgba(229,9,20,0.85))`,
-                      boxShadow: `0 6px 30px rgba(229,9,20,0.18)`,
-                    }}
-                  >
-                    PRO
+                {/* Badge */}
+                <motion.div
+                  className="inline-flex items-center gap-3 mb-6"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
+                >
+                  <span className="px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest bg-gradient-to-r from-[#e50914] to-[#ff6b6b] text-white shadow-[0_0_20px_rgba(229,9,20,0.6)]">
+                    🌟 Pro Player
                   </span>
+                  <span className="text-sm text-[#00e5ff] font-semibold">Top-ranked</span>
+                </motion.div>
 
-                  <div className="ml-2 text-sm text-white/60">Top-ranked</div>
-                </div>
-
-                <h2 className="text-5xl md:text-6xl font-extrabold mt-4 tracking-tight leading-tight">
+                {/* Name */}
+                <motion.h2
+                  className="text-5xl md:text-6xl lg:text-7xl font-black mt-4 tracking-tighter leading-tight text-white"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.15 }}
+                >
                   {player.name}
-                </h2>
+                </motion.h2>
 
-                <h3
-                  className="text-2xl font-semibold mt-2 inline-block"
-                  style={{
-                    color: ACCENT,
-                    textShadow: `0 0 10px rgba(229,9,20,0.9)`,
-                  }}
+                {/* Role */}
+                <motion.h3
+                  className="text-2xl md:text-3xl font-black mt-4 bg-gradient-to-r from-[#e50914] to-[#ff6b6b] bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(229,9,20,0.6)]"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
                 >
                   {player.role}
-                </h3>
+                </motion.h3>
 
-                <p className="text-white/60 mt-6 mb-8 leading-relaxed max-w-lg">
+                {/* Description */}
+                <motion.p
+                  className="text-gray-300 mt-6 mb-8 leading-relaxed max-w-lg text-lg"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.25 }}
+                >
                   {player.desc}
-                </p>
+                </motion.p>
 
-                <div className="flex items-center gap-4 justify-center md:justify-start">
-                  <button
+                {/* Buttons */}
+                <motion.div
+                  className="flex items-center gap-4 justify-center md:justify-start flex-wrap"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.3 }}
+                >
+                  <motion.button
                     onClick={() => setShowDetail(true)}
-                    className="px-7 py-3 text-sm font-semibold rounded-xl bg-[#E50914] hover:bg-[#b70710] text-white
-                      shadow-[0_12px_40px_rgba(229,9,20,0.35)] transition transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:ring-offset-2"
+                    className="px-8 py-4 text-base font-black rounded-xl bg-gradient-to-r from-[#e50914] to-[#ff6b6b] hover:from-[#d40812] hover:to-[#ff4444] text-white
+                      shadow-[0_0_20px_rgba(229,9,20,0.6)] transition-all duration-300 uppercase tracking-tight"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    See More
-                  </button>
+                    📊 See Stats
+                  </motion.button>
 
-                  <button
+                  <motion.button
                     onClick={() => {
-                      // quick action example
                       setIndex((i) => (i + 1) % players.length);
                     }}
-                    className="px-4 py-2 text-sm rounded-lg bg-black/40 border border-white/10 text-white hover:bg-[#111] transition focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:ring-offset-2"
+                    className="px-6 py-4 text-base font-bold rounded-xl bg-gray-900/80 border border-white/20 text-white hover:border-[#00e5ff]/50 transition-all duration-300 uppercase tracking-tight"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    Quick Cycle
-                  </button>
-                </div>
+                    Next Player ➜
+                  </motion.button>
+                </motion.div>
 
-                {/* dots */}
-                <div className="flex gap-2 mt-6 justify-center md:justify-start">
+                {/* Indicator dots */}
+                <motion.div
+                  className="flex gap-3 mt-8 justify-center md:justify-start"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.35 }}
+                >
                   {players.map((_, i) => (
-                    <button
+                    <motion.button
                       key={i}
                       onClick={() => setIndex(i)}
                       aria-label={`Go to player ${i + 1}`}
-                      className={`w-3 h-3 rounded-full transition-all ${i === index
-                        ? "bg-[#E50914] shadow-[0_0_12px_rgba(229,9,20,0.9)] scale-110"
-                        : "bg-white/20"
+                      className={`rounded-full transition-all ${i === index
+                        ? "w-8 h-3 bg-gradient-to-r from-[#e50914] to-[#ff6b6b] shadow-[0_0_15px_rgba(229,9,20,0.8)]"
+                        : "w-3 h-3 bg-white/30 hover:bg-white/50"
                         }`}
+                      whileHover={{ scale: 1.2 }}
                     />
                   ))}
-                </div>
+                </motion.div>
               </motion.div>
 
               {/* right: image */}
-              <div className="relative w-full md:w-1/2 flex items-center justify-center">
+              <motion.div
+                className="relative w-full md:w-1/2 flex items-center justify-center"
+                initial={{ x: 30, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
                 {/* glowing blurred background of next image */}
-                <div
+                <motion.div
                   aria-hidden
-                  className="absolute right-0 top-6 w-[45%] h-[60%] rounded-xl blur-3xl opacity-30"
+                  className="absolute right-0 top-6 w-[45%] h-[60%] rounded-3xl blur-3xl opacity-40"
+                  animate={{ scale: [0.95, 1.05, 0.95] }}
+                  transition={{ duration: 4, repeat: Infinity }}
                   style={{
                     backgroundImage: `url(${nextImg})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
-                    transform: "scale(0.95)",
-                    filter: "saturate(0.8)",
+                    filter: "saturate(0.6)",
                   }}
                 />
 
@@ -262,27 +320,22 @@ export default function PlayerCarousel() {
                   onError={onImgError}
                   loading="lazy"
                   className="w-[85%] md:w-[75%] rounded-3xl object-cover relative z-10
-                    shadow-[0_20px_60px_rgba(0,0,0,0.7)] border border-white/6"
+                    shadow-[0_20px_60px_rgba(229,9,20,0.3)] border-2 border-[#e50914]/30"
                   initial={{ opacity: 0, scale: 0.98, x: 30 }}
                   animate={{ opacity: 1, scale: 1, x: 0 }}
                   exit={{ opacity: 0, scale: 0.98, x: -30 }}
                   transition={{ duration: 0.5 }}
                 />
 
-                {/* small ribbon */}
-                <div
-                  className="absolute left-4 top-4 px-3 py-1 rounded-md text-xs font-bold"
-                  style={{
-                    background: "#3B82F6",
-                    // background: `linear-gradient(90deg, ${ACCENT}, rgba(229,9,20,0.9))`,
-                    color: "white",
-                    transform: "rotate(-6deg)",
-                    boxShadow: "0 8px 30px rgba(229,9,20,0.12)",
-                  }}
+                {/* Elite ribbon */}
+                <motion.div
+                  className="absolute left-4 top-4 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-gradient-to-r from-[#00e5ff] to-[#00b8ff] text-gray-950 shadow-[0_0_20px_rgba(0,229,255,0.6)]"
+                  animate={{ rotate: [-4, 4, -4] }}
+                  transition={{ duration: 3, repeat: Infinity }}
                 >
-                  ELITE
-                </div>
-              </div>
+                  ⚡ Elite
+                </motion.div>
+              </motion.div>
             </motion.div>
           ) : (
             <motion.div
@@ -291,66 +344,73 @@ export default function PlayerCarousel() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.45 }}
-              className="w-full max-w-[1250px] rounded-2xl p-8 md:p-12 bg-black/30 backdrop-blur-2xl border border-white/8 flex flex-col md:flex-row items-center gap-8"
+              className="relative z-10 w-full max-w-5xl rounded-3xl p-8 md:p-12 bg-gradient-to-b from-gray-900/80 to-gray-950/80 backdrop-blur-xl border border-white/10 flex flex-col md:flex-row items-center gap-10"
             >
-              <img
+              <motion.img
                 src={player.img}
                 alt={`${player.name} profile`}
                 onError={onImgError}
                 loading="lazy"
-                className="w-[85%] md:w-[45%] rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.7)] object-cover"
+                className="w-[85%] md:w-[40%] rounded-2xl shadow-[0_20px_60px_rgba(229,9,20,0.3)] object-cover border-2 border-[#e50914]/30"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
               />
 
-              <div className="w-full text-center md:text-left">
-                <h2 className="text-4xl font-bold">{player.name}</h2>
-                <h3
-                  className="text-xl font-semibold mt-1"
-                  style={{ color: ACCENT }}
-                >
+              <motion.div
+                className="w-full text-center md:text-left flex flex-col justify-center"
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <p className="text-[#00e5ff] text-sm font-semibold uppercase tracking-widest mb-2">Player Profile</p>
+                <h2 className="text-4xl md:text-5xl font-black text-white">{player.name}</h2>
+                <h3 className="text-2xl font-black mt-2 bg-gradient-to-r from-[#e50914] to-[#ff6b6b] bg-clip-text text-transparent">
                   {player.role}
                 </h3>
 
-                <p className="text-white/70 mt-4 leading-relaxed max-w-prose">
+                <p className="text-gray-300 mt-6 leading-relaxed max-w-prose text-lg">
                   {player.desc}
                 </p>
 
                 {/* STATS */}
-                <div className="flex flex-wrap gap-6 mt-8 items-center">
+                <div className="flex flex-wrap gap-4 md:gap-6 mt-10 items-center">
                   {Object.entries(player.stats).map(([key, val]) => (
-                    <div
+                    <motion.div
                       key={key}
-                      className="min-w-[90px] bg-black/40 border border-white/6 rounded-xl px-4 py-3"
+                      className="min-w-[100px] bg-gradient-to-br from-gray-900/80 to-gray-950/80 border border-white/10 rounded-2xl px-6 py-5 hover:border-[#e50914]/50 transition-all duration-300"
+                      whileHover={{ scale: 1.05 }}
                     >
-                      <p
-                        className="font-extrabold text-3xl"
-                        style={{
-                          color: SECONDARY,
-                          textShadow: `0 0 10px rgba(59,130,246,0.25)`,
-                        }}
-                      >
+                      <p className="font-black text-3xl bg-gradient-to-r from-[#00e5ff] to-[#00b8ff] bg-clip-text text-transparent">
                         {val}
                       </p>
-                      <p className="text-white/50 text-sm capitalize">{key}</p>
-                    </div>
+                      <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mt-1 capitalize">
+                        {key}
+                      </p>
+                    </motion.div>
                   ))}
                 </div>
 
-                <div className="mt-8 flex gap-3">
-                  <button
+                <div className="mt-10 flex gap-4 flex-wrap">
+                  <motion.button
                     onClick={() => setShowDetail(false)}
-                    className="px-6 py-2 rounded-lg bg-black/40 hover:bg-black/60 border border-white/10 text-white text-sm transition focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:ring-offset-2"
+                    className="px-6 py-3 rounded-xl bg-gray-900/60 hover:bg-gray-800/80 border border-white/20 text-white font-bold text-base transition-all duration-300 uppercase tracking-tight"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    Back
-                  </button>
+                    ← Back
+                  </motion.button>
 
-                  <a
+                  <motion.a
                     href="#"
-                    className="px-6 py-2 rounded-lg bg-[#E50914] text-white text-sm font-semibold hover:bg-[#b70710] transition focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:ring-offset-2"
+                    className="px-8 py-3 rounded-xl bg-gradient-to-r from-[#e50914] to-[#ff6b6b] text-white font-black text-base hover:from-[#d40812] hover:to-[#ff4444] transition-all duration-300 uppercase tracking-tight shadow-[0_0_20px_rgba(229,9,20,0.6)]"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    View Matches
-                  </a>
+                    🎮 View Matches
+                  </motion.a>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

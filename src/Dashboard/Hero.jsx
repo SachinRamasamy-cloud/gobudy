@@ -1,166 +1,105 @@
 
-// import React from "react";
-// import { motion } from "framer-motion";
-
-// export default function Hero() {
-//   return (
-//     <section className="relative h-[90vh] w-full overflow-hidden">
-//       {/* Background Video */}
-//       <video
-//         autoPlay
-//         muted
-//         loop
-//         playsInline
-//         className="absolute inset-0 w-full h-full object-cover opacity-40"
-//       >
-//         <source
-//           src={`${import.meta.env.BASE_URL}videos/37585-414024825_medium.mp4`}
-//           type="video/mp4"
-//         />
-//       </video>
-
-//       {/* Dark/Light Overlay */}
-//       <div className="absolute inset-0 bg-black/60 dark:bg-black/70 bg-white/50 mix-blend-multiply" />
-
-//       {/* Hero Content */}
-//       <motion.div
-//         className="relative z-10 flex flex-col items-center justify-center h-full text-center px-6"
-//         initial={{ opacity: 0, y: 40 }}
-//         animate={{ opacity: 1, y: 0 }}
-//         transition={{ duration: 1 }}
-//       >
-//         <h1 className="text-4xl md:text-6xl font-extrabold uppercase tracking-wide 
-//           text-white dark:text-white drop-shadow-xl">
-//           Compete Across Every Arena
-//         </h1>
-
-//         <p className="mt-5 max-w-2xl text-sm md:text-lg text-gray-900 dark:text-gray-300">
-//           Join tournaments, climb the rankings, and prove your skill in every game.
-//         </p>
-
-//         {/* Buttons */}
-//         <div className="mt-10 flex flex-col sm:flex-row gap-6 justify-center">
-//           {/* Primary Button (Brand Red) */}
-//           <motion.button
-//             whileHover={{ scale: 1.05 }}
-//             className="px-10 py-3 rounded-xl font-semibold 
-//               bg-[#e50914] text-white 
-//               shadow-[0_0_20px_rgba(229,9,20,0.5)]
-//               hover:shadow-[0_0_30px_rgba(229,9,20,0.8)]
-//               transition-all duration-300"
-//           >
-//             Join Now <i className="fa-solid fa-arrow-right ml-3"></i>
-//           </motion.button>
-
-//           {/* Secondary Button (Electric Cyan) */}
-//           <motion.button
-//             whileHover={{ scale: 1.05 }}
-//             className="px-10 py-3 rounded-xl font-semibold 
-//               border-2 border-[#00e5ff] text-[#00e5ff]
-//               hover:bg-[#00e5ff] hover:text-black
-//               transition-all duration-300"
-//           >
-//             View Leaderboard
-//           </motion.button>
-//         </div>
-//       </motion.div>
-//     </section>
-//   );
-// }
 import React from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function Hero() {
-    const prefersReducedMotion = useReducedMotion();
+  return (
+    <section className="py-12 lg:py-20">
+      <div className="container mx-auto px-6 lg:px-0 flex flex-col lg:flex-row items-start gap-8">
 
-    const containerVariants = {
-        hidden: { opacity: 0, y: 40 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: { duration: 1, ease: "easeOut" },
-        },
-    };
-
-    const hoverProp = prefersReducedMotion ? {} : { whileHover: { scale: 1.05 } };
-
-    return (
-        <section
-            className="relative h-[90vh] w-full overflow-hidden bg-[#0d0d0d]"
-            role="region"
-            aria-label="Hero — compete across every arena"
+        {/* LEFT - Content */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
+          className="flex-1"
         >
-            {/* Background Video (presentation only) */}
-            <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                className="absolute inset-0 w-full h-full object-cover opacity-20"
-                aria-hidden="true"
-                tabIndex={-1}
+          <div className="inline-block px-3 py-1 rounded-full bg-gradient-to-r from-cyan-600 to-red-600 text-white font-semibold text-xs mb-4">LIVE TOURNAMENTS</div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white"
+          >
+            Compete. Win. Build Your Legacy.
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.25 }}
+            className="text-gray-300 text-base md:text-lg mt-4 max-w-xl"
+          >
+            Join the world's most advanced esports ecosystem. Compete in cinematic tournaments, rise through the ranks, and carve your name into the future of gaming.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35 }}
+            className="flex flex-wrap items-center gap-4 mt-6"
+          >
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              className="px-6 py-3 rounded-lg bg-gradient-to-r from-red-600 to-red-700 text-white font-bold shadow-lg text-sm"
             >
-                <source
-                    src={`${import.meta.env.BASE_URL}videos/37585-414024825_medium.mp4`}
-                    type="video/mp4"
-                />
-            </video>
+              START COMPETING
+            </motion.button>
 
-            {/* Dark Overlay tuned for #0d0d0d */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-[#0d0d0d]" />
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              className="px-6 py-3 rounded-lg border border-cyan-400 text-white font-semibold text-sm"
+            >
+              VIEW TOURNAMENTS
+            </motion.button>
+          </motion.div>
 
-            {/* Hero Content */}
+          {/* Stats - stack on mobile (single column), row on md+ */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="flex flex-col md:flex-row gap-4 pt-8 w-full"
+          >
             <motion.div
-                className="relative z-10 flex flex-col items-center justify-center h-full text-center px-6"
-                initial={prefersReducedMotion ? false : "hidden"}
-                animate="visible"
-                variants={containerVariants}
+              whileHover={{ translateY: -5 }}
+              className="flex-1 px-5 py-4 bg-gradient-to-br from-cyan-800/20 to-cyan-700/10 border-l-4 border-cyan-400 rounded-lg"
             >
-                <h1 className="text-4xl md:text-6xl font-extrabold uppercase tracking-wide text-white drop-shadow-[0_8px_30px_rgba(0,0,0,0.8)]">
-                    Compete Across Every Arena
-                </h1>
-
-                <p className="mt-5 max-w-2xl text-sm md:text-lg text-gray-300">
-                    Join tournaments, climb the rankings, and prove your skill in every game.
-                </p>
-
-                {/* Buttons */}
-                <div className="mt-10 flex flex-col sm:flex-row gap-6 justify-center items-center">
-                    {/* Primary Button (Brand Red) */}
-                    <motion.button
-                        {...hoverProp}
-                        type="button"
-                        className="inline-flex w-fit items-center px-10 py-3 rounded-xl font-semibold bg-[#e50914] text-white shadow-[0_8px_30px_rgba(229,9,20,0.45)] hover:shadow-[0_12px_40px_rgba(229,9,20,0.65)] transition-all duration-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#e50914]/30"
-                        aria-label="Join now — sign up"
-                    >
-                        <span>Join Now</span>
-                        {/* Inline SVG arrow */}
-                        <svg
-                            className="ml-3 -mr-1 w-4 h-4"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            aria-hidden="true"
-                        >
-                            <path
-                                fillRule="evenodd"
-                                d="M10.293 15.707a1 1 0 010-1.414L13.586 11H4a1 1 0 110-2h9.586L10.293 5.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z"
-                                clipRule="evenodd"
-                            />
-                        </svg>
-                    </motion.button>
-
-                    {/* Secondary Button (Blue) */}
-                    <motion.button
-                        {...hoverProp}
-                        type="button"
-                        className="inline-flex items-center px-10 py-3 rounded-xl font-semibold bg-black/40 border border-white/10 text-white transition-all duration-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#1e90ff]/30"
-                        aria-label="View leaderboard"
-                    >
-                        View Leaderboard
-                    </motion.button>
-                </div>
+              <div className="text-cyan-300 font-black text-2xl md:text-3xl">2.5M+</div>
+              <div className="text-gray-400 text-xs md:text-sm font-medium mt-1">Active Players</div>
             </motion.div>
-        </section>
-    );
+
+            <motion.div
+              whileHover={{ translateY: -5 }}
+              className="flex-1 px-5 py-4 bg-gradient-to-br from-red-800/20 to-red-700/10 border-l-4 border-red-500 rounded-lg"
+            >
+              <div className="text-red-400 font-black text-2xl md:text-3xl">$10M+</div>
+              <div className="text-gray-400 text-xs md:text-sm font-medium mt-1">Prize Pool</div>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ translateY: -5 }}
+              className="flex-1 px-5 py-4 bg-gradient-to-br from-purple-800/20 to-purple-700/10 border-l-4 border-purple-400 rounded-lg"
+            >
+              <div className="text-purple-300 font-black text-2xl md:text-3xl">18.5K</div>
+              <div className="text-gray-400 text-xs md:text-sm font-medium mt-1">Online Now</div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+
+        {/* RIGHT - Hero Image */}
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+          className="hidden lg:block w-[520px]"
+        >
+          <div className="rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-gradient-to-br from-red-700/30 to-cyan-700/20">
+            <img src="/hero-image.png" alt="Esports Hero" className="w-full h-[420px] object-cover" />
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
 }

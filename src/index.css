@@ -14,5 +14,21 @@
 }
 
 body {
-    background-color: rgb(31 41 55);
+    background-color: #0d0d0d;
+}
+
+
+/* Hide Scrollbar */
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+:root {
+    --crayon-blue: #00A9FF;
 }

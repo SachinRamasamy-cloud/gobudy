@@ -2,18 +2,22 @@ import React, { useEffect, useState } from "react";
 import Head from "./comp/Head";
 import Footer from "./comp/Footer";
 import Nav from "./comp/Nav";
-import Dash from "./page/Dash";
 import Preload from "./comp/Preload";
-import Players from "./page/Players";
-import Videos from "./page/Videos";
-import Reels from "./page/Reels";
+import Players from "./Dashboard/Players";
+import Videos from "./Dashboard/Videos";
+import Reels from "./Dashboard/Reels";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
-import ReelsPage from "./page/Reelscard";
-import Match from "./page/Match";
+import ReelsPage from "./Dashboard/Reelscard";
+import Match from "./Dashboard/Match";
 import SmoothScroll from "./Scrollsmooth";
 import { AnimatePresence, motion } from "framer-motion";
 import Wallet from "./page2/Wallet";
 import Tornaments from "./page2/Tornaments";
+import Tounmat from "./Dashboard/Tounmat";
+import Hero from "./Dashboard/Hero";
+import Topgm from "./Dashboard/Topgm";
+
+
 
 function App() {
   const [navOpen, setNavOpen] = useState(false);
@@ -41,7 +45,9 @@ function App() {
             path="/"
             element={
               <>
-                <Dash />
+                <Hero />
+                <Topgm />
+                <Tounmat />
                 <Players />
                 <Videos />
                 <Reels />

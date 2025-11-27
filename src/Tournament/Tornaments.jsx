@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 
 export default function Tournaments() {
     const [timeLeft, setTimeLeft] = useState({
@@ -14,11 +13,6 @@ export default function Tournaments() {
             setTimeLeft(prev => {
                 let { days, hours, minutes, seconds } = prev;
 
-                if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
-                    clearInterval(interval);
-                    return prev;
-                }
-
                 if (seconds > 0) seconds--;
                 else {
                     seconds = 59;
@@ -32,7 +26,6 @@ export default function Tournaments() {
                         }
                     }
                 }
-
                 return { days, hours, minutes, seconds };
             });
         }, 1000);
@@ -41,161 +34,94 @@ export default function Tournaments() {
     }, []);
 
     return (
-        <div>
-            <section className="relative min-h-screen w-full overflow-hidden bg-gradient-to-b from-black via-gray-950 to-black">
-                {/* Background Video */}
-                <video
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    className="absolute inset-0 w-full h-full object-cover opacity-40"
-                >
-                    <source
-                        src={`${import.meta.env.BASE_URL}videos/37585-414024825_medium.webm`}
-                        type="video/mp4"
-                    />
-                </video>
+        <section className="relative bg-black text-white min-h-screen flex items-center px-6 lg:px-20 py-16 overflow-hidden">
 
-                {/* Animated Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/80" />
-                
-                {/* Animated glow effect */}
-                <motion.div
-                    className="absolute inset-0 opacity-30"
-                    animate={{
-                        boxShadow: [
-                            "0 0 60px rgba(229,9,20,0.1)",
-                            "0 0 80px rgba(229,9,20,0.15)",
-                            "0 0 60px rgba(229,9,20,0.1)",
-                        ],
-                    }}
-                    transition={{
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                    }}
-                />
+            {/* RED NEON BACKLIGHT */}
+            <div className="absolute inset-0 bg-red-600 opacity-[0.15] blur-[180px] animate-pulseSlow pointer-events-none" />
 
-                {/* Content */}
-                <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center px-6 py-12">
+            {/* GRID WRAPPER */}
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
+
+                {/* LEFT SECTION */}
+                <div className="fade-in-up space-y-8">
+
                     {/* Badge */}
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                        className="inline-block mb-6"
-                    >
-                        <span className="px-4 py-2 bg-gradient-to-r from-[#e50914] to-red-700 text-white text-xs font-bold uppercase tracking-widest rounded-full">
-                            ⚡ Featured Tournament 2025
-                        </span>
-                    </motion.div>
+                    <span className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-[0_0_15px_rgba(229,9,20,0.6)]">
+                        ⚡ Featured Tournament 2025
+                    </span>
 
-                    {/* Main Heading */}
-                    <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter uppercase text-white leading-tight mb-6"
-                        style={{
-                            textShadow: "0 0 30px rgba(229,9,20,0.6), 0 0 60px rgba(229,9,20,0.3)",
-                        }}
-                    >
+                    {/* Title */}
+                    <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight tracking-tight">
                         GoBudy
-                        <motion.span
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.4, duration: 0.8 }}
-                            className="block text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-red-700 mt-2"
-                        >
+                        <span className="block bg-gradient-to-r from-red-500 via-red-600 to-red-700 bg-clip-text text-transparent mt-3">
                             Valorant Cup
-                        </motion.span>
-                        <span className="block text-gray-300 text-4xl sm:text-5xl md:text-6xl mt-3">2025</span>
-                    </motion.h1>
+                        </span>
+                        <span className="block text-gray-300 text-3xl sm:text-4xl mt-2">
+                            2025
+                        </span>
+                    </h1>
 
                     {/* Subtitle */}
-                    <motion.p
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        className="text-gray-300 mt-8 max-w-2xl text-lg md:text-xl leading-relaxed tracking-wide font-light"
-                    >
-                        Climb the ranks. <span className="text-[#00e5ff] font-semibold">Conquer the arena.</span> Claim your <span className="text-red-500 font-semibold">glory</span>.
-                    </motion.p>
+                    <p className="max-w-xl text-gray-300 text-lg leading-relaxed fade-in-up delay-200">
+                        Climb the ranks. <span className="text-cyan-400 font-semibold">Conquer the arena.</span>  
+                        Claim your <span className="text-red-500 font-semibold">glory</span>.
+                    </p>
 
-                    {/* Countdown Timer */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.5 }}
-                        className="flex gap-3 sm:gap-4 justify-center w-full mt-12 flex-wrap"
-                    >
+                    {/* Countdown */}
+                    <div className="flex gap-4 mt-8 fade-in-up delay-300 flex-wrap">
                         {[
                             { label: "Days", value: timeLeft.days },
                             { label: "Hours", value: timeLeft.hours },
                             { label: "Minutes", value: timeLeft.minutes },
                             { label: "Seconds", value: timeLeft.seconds },
-                        ].map((item, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.6 + i * 0.1, duration: 0.5 }}
-                                whileHover={{ scale: 1.08, y: -5 }}
-                                className="text-center bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-md border border-red-600/50 hover:border-red-500 rounded-xl px-4 sm:px-5 md:px-6 py-4 sm:py-5 shadow-[0_0_25px_rgba(229,9,20,0.3)] hover:shadow-[0_0_35px_rgba(229,9,20,0.5)] transition-all w-20 sm:w-24 md:w-28 lg:w-32"
+                        ].map((i, idx) => (
+                            <div
+                                key={idx}
+                                className="text-center bg-gradient-to-br from-gray-900 to-gray-800 border border-red-600/40 backdrop-blur-xl rounded-xl px-6 py-5 w-24 hover:scale-105 transition-transform shadow-[0_0_25px_rgba(229,9,20,0.3)]"
                             >
-                                <motion.h1
-                                    key={`${item.label}-${item.value}`}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="text-red-500 text-2xl sm:text-3xl md:text-4xl font-black drop-shadow-[0_0_10px_rgba(229,9,20,0.6)]"
-                                >
-                                    {String(item.value).padStart(2, "0")}
-                                </motion.h1>
-                                <p className="text-gray-300 text-xs sm:text-sm uppercase tracking-widest mt-2 font-semibold">
-                                    {item.label}
+                                <h2 className="text-3xl font-black text-red-500 ">
+                                    {String(i.value).padStart(2, "0")}
+                                </h2>
+                                <p className="text-sm uppercase tracking-widest text-gray-300 mt-1 font-semibold">
+                                    {i.label}
                                 </p>
-                            </motion.div>
+                            </div>
                         ))}
-                    </motion.div>
+                    </div>
 
-                    {/* CTA Buttons */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 1 }}
-                        className="mt-16 flex flex-col sm:flex-row gap-6 justify-center"
-                    >
-                        <motion.button
-                            whileHover={{ scale: 1.05, boxShadow: "0 0 35px rgba(229,9,20,0.6)" }}
-                            whileTap={{ scale: 0.95 }}
-                            className="px-12 sm:px-16 py-4 rounded-xl font-bold bg-gradient-to-r from-red-600 via-red-600 to-red-700 text-white shadow-[0_0_25px_rgba(229,9,20,0.4)] hover:from-red-500 hover:to-red-600 transition-all duration-300 tracking-wide uppercase text-sm sm:text-base flex items-center justify-center gap-3"
-                        >
+                    {/* Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-6 fade-in-up delay-500 mt-12">
+
+                        <button className="px-14 py-4 rounded-xl font-bold bg-gradient-to-r from-red-600 to-red-700 text-white  transition-all tracking-widest uppercase">
                             Register Now
-                            <i className="fa-solid fa-arrow-right text-sm"></i>
-                        </motion.button>
+                        </button>
 
-                        <motion.button
-                            whileHover={{ scale: 1.05, boxShadow: "0 0 35px rgba(0,229,255,0.3)" }}
-                            whileTap={{ scale: 0.95 }}
-                            className="px-12 sm:px-16 py-4 rounded-xl font-bold bg-transparent border-2 border-[#00e5ff] text-[#00e5ff] shadow-[0_0_15px_rgba(0,229,255,0.2)] hover:bg-[#00e5ff]/10 transition-all duration-300 tracking-wide uppercase text-sm sm:text-base flex items-center justify-center gap-3"
-                        >
-                            Learn More
-                            <i className="fa-solid fa-info text-sm"></i>
-                        </motion.button>
-                    </motion.div>
-
-                    {/* Scroll indicator */}
-                    <motion.div
-                        animate={{ y: [0, 10, 0] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-                    >
-                        <p className="text-gray-400 text-xs uppercase tracking-widest mb-2">Scroll to explore</p>
-                        <i className="fa-solid fa-chevron-down text-red-500 text-lg block"></i>
-                    </motion.div>
+                        <button className="px-14 py-4 rounded-xl font-bold border-2 border-cyan-400 text-cyan-400 hover:bg-cyan-400/10 transition-all uppercase tracking-widest">
+                            Watch Live
+                        </button>
+                    </div>
                 </div>
-            </section>
-        </div>
+
+                {/* RIGHT SECTION — VIDEO */}
+                <div className="relative fade-in-up delay-300 flex justify-center">
+
+                    <div className="relative w-full max-w-lg aspect-video rounded-2xl overflow-hidden  border border-red-700/40 animate-glowRed">
+                        <video
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            className="w-full h-full object-cover"
+                        >
+                            <source
+                                src={`${import.meta.env.BASE_URL}videos/37585-414024825_medium.webm`}
+                                type="video/mp4"
+                            />
+                        </video>
+                    </div>
+
+                </div>
+            </div>
+        </section>
     );
 }

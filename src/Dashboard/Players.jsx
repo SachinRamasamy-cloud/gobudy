@@ -107,7 +107,7 @@ export default function PlayerCarousel() {
         >
           <div>
             <p className="text-[#00e5ff] text-sm font-semibold uppercase tracking-widest mb-2">
-              🏆 Elite Competitors
+              Elite Competitors
             </p>
             <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-tight">
               Top
@@ -206,7 +206,7 @@ export default function PlayerCarousel() {
                   transition={{ duration: 0.4, delay: 0.1 }}
                 >
                   <span className="px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest bg-gradient-to-r from-[#e50914] to-[#ff6b6b] text-white shadow-[0_0_20px_rgba(229,9,20,0.6)]">
-                    🌟 Pro Player
+                     Pro Player
                   </span>
                   <span className="text-sm text-[#00e5ff] font-semibold">Top-ranked</span>
                 </motion.div>
@@ -255,7 +255,7 @@ export default function PlayerCarousel() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    📊 See Stats
+                     See Stats
                   </motion.button>
 
                   <motion.button
@@ -266,7 +266,7 @@ export default function PlayerCarousel() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    Next Player ➜
+                    Next Player 
                   </motion.button>
                 </motion.div>
 
@@ -304,7 +304,6 @@ export default function PlayerCarousel() {
                   aria-hidden
                   className="absolute right-0 top-6 w-[45%] h-[60%] rounded-3xl blur-3xl opacity-40"
                   animate={{ scale: [0.95, 1.05, 0.95] }}
-                  transition={{ duration: 4, repeat: Infinity }}
                   style={{
                     backgroundImage: `url(${nextImg})`,
                     backgroundSize: "cover",
@@ -326,15 +325,6 @@ export default function PlayerCarousel() {
                   exit={{ opacity: 0, scale: 0.98, x: -30 }}
                   transition={{ duration: 0.5 }}
                 />
-
-                {/* Elite ribbon */}
-                <motion.div
-                  className="absolute left-4 top-4 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-gradient-to-r from-[#00e5ff] to-[#00b8ff] text-gray-950 shadow-[0_0_20px_rgba(0,229,255,0.6)]"
-                  animate={{ rotate: [-4, 4, -4] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                >
-                  ⚡ Elite
-                </motion.div>
               </motion.div>
             </motion.div>
           ) : (
@@ -398,7 +388,7 @@ export default function PlayerCarousel() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    ← Back
+                     Back
                   </motion.button>
 
                   <motion.a
@@ -407,7 +397,7 @@ export default function PlayerCarousel() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    🎮 View Matches
+                     View Matches
                   </motion.a>
                 </div>
               </motion.div>

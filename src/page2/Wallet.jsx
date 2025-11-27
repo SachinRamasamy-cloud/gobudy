@@ -1,16 +1,115 @@
-import React, { useState } from 'react'
-import { motion } from 'framer-motion'
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { addPayment, updUser, getUserById } from '../../server/server';
 
 export default function Wallet() {
+    const [Minput, setInput] = useState('');
+    const [fee, setFee] = useState(0);
+    const [total, setTotal] = useState(0);
     const [selectedAmount, setSelectedAmount] = useState(null);
+    const [transactions, setTransactions] = useState([]);
+    const [user, setUser] = useState(null);
 
-    const transactions = [
-        { title: "Wallet Top-up", date: "2024-01-15 14:30", amount: "+₹100.00", status: "Completed", type: "credit" },
-        { title: "Valorant Championship Entry", date: "2024-01-14 10:15", amount: "-₹25.00", status: "Completed", type: "debit" },
-        { title: "Tournament Prize - 1st Place", date: "2024-01-13 18:45", amount: "+₹250.00", status: "Completed", type: "credit" },
-        { title: "Wallet Top-up", date: "2024-01-13 09:20", amount: "+₹50.00", status: "Pending", type: "credit" },
-        { title: "CS:GO Tournament Entry", date: "2024-01-11 16:30", amount: "-₹15.00", status: "Completed", type: "debit" },
-    ]
+    // console.log("LOCALSTORAGE USER ID =", localStorage.getItem("userId"));
+    // console.log("LOCALSTORAGE USER  =", localStorage.getItem("user"));
+    // Update fee & total when input changes
+    useEffect(() => {
+        const amount = Number(Minput) || 0;
+        const calcFee = Math.floor(amount * 0.2);
+        const calcTotal = amount + calcFee;
+        setFee(calcFee);
+        setTotal(calcTotal);
+    }, [Minput]);
+    useEffect(() => {
+        let intervalId;
+
+        const loadUser = async () => {
+            const storedUser = JSON.parse(localStorage.getItem("user"));
+            if (!storedUser?._id) return;
+
+            try {
+                const res = await getUserById(storedUser._id);
+                const freshUser = res.data;
+
+                if (JSON.stringify(freshUser.transaction) !== JSON.stringify(user?.transaction)) {
+                    setUser(freshUser);
+                    setTransactions(freshUser.transaction || []);
+                    localStorage.setItem("user", JSON.stringify(freshUser));
+                }
+            } catch (err) {
+                console.error("Failed to load user/transactions", err);
+            }
+        };
+
+        loadUser();
+        intervalId = setInterval(loadUser, 5000);
+        return () => clearInterval(intervalId);
+
+    }, [user]);
+
+
+    // Handle adding money
+    const handleAddMoney = async () => {
+        if (!user?._id) {
+            alert("User not logged in");
+            return;
+        }
+
+        const amount = Number(Minput);
+        if (!amount || amount <= 0) {
+            alert("Enter a valid amount");
+            return;
+        }
+
+        // Safely calculate fee and total
+        const safeFee = Number(fee) || 0;
+        const safeTotal = Number(total) || amount + safeFee;
+
+        // Build payload
+        const paymentData = {
+            userId: user._id.toString(),
+            amount,
+            fee: safeFee,
+            total: safeTotal,
+            Status: "pending", // lowercase for consistency
+            type: "credit",
+            title: `Deposit ₹${amount}`,
+            date: new Date().toISOString(),
+        };
+
+        try {
+            // 1. Add payment in backend
+            const res = await addPayment(paymentData);
+            const savedPayment = res.data;
+
+            // 2. Fetch latest user from backend to avoid overwriting old transactions
+            const latestUserRes = await getUserById(user._id);
+            const latestUser = latestUserRes.data;
+
+            // 3. Append new payment safely
+            const updatedTransactions = [...(latestUser.transaction || []), savedPayment];
+
+            // 4. Update user in backend
+            const updatedUser = {
+                ...latestUser,
+                transaction: updatedTransactions,
+            };
+            await updUser(user._id, updatedUser);
+
+            // 5. Update frontend state + localStorage
+            setUser(updatedUser);
+            setTransactions(updatedTransactions);
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+
+            alert("Request sent to admin. Wait for approval.");
+            setInput("");
+            setSelectedAmount(null);
+        } catch (err) {
+            console.error("Payment error:", err);
+            alert("Request failed. Please try again.");
+        }
+    };
+
 
     const quickAmounts = ["₹100", "₹150", "₹200", "₹300", "₹500", "₹1000"];
     const paymentMethods = [
@@ -33,7 +132,9 @@ export default function Wallet() {
                 className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between py-12 px-6 md:px-10 max-w-7xl mx-auto"
             >
                 <div>
-                    <p className="text-[#00e5ff] text-sm font-semibold uppercase tracking-widest mb-2">💰 Wallet Management</p>
+                    <p className="text-[#00e5ff] text-sm font-semibold uppercase tracking-widest mb-2">
+                        Wallet Management
+                    </p>
                     <h1 className="text-4xl md:text-5xl font-black tracking-tighter leading-tight">
                         Add <span className="bg-gradient-to-r from-[#e50914] to-[#ff6b6b] bg-clip-text text-transparent">Balance</span>
                     </h1>
@@ -43,37 +144,7 @@ export default function Wallet() {
                 </div>
             </motion.div>
 
-            {/* Balance Cards */}
-            <div className="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-6 px-6 md:px-10 max-w-7xl mx-auto mb-12">
-                {[
-                    { icon: "fa-wallet", label: "Current Balance", amount: "₹2500", gradient: "from-[#e50914] to-[#ff6b6b]" },
-                    { icon: "fa-coins", label: "Total Deposits", amount: "₹2500", gradient: "from-green-600 to-emerald-700" },
-                    { icon: "fa-money-bill-transfer", label: "Total Spent", amount: "₹2500", gradient: "from-blue-600 to-cyan-700" }
-                ].map((card, idx) => (
-                    <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: idx * 0.1 }}
-                        className={`rounded-2xl bg-gradient-to-br ${card.gradient} p-8 shadow-[0_0_30px_rgba(0,0,0,0.5)] border border-white/10`}
-                        whileHover={{ scale: 1.02, y: -4 }}
-                    >
-                        <div className="flex items-center gap-4 mb-6">
-                            <motion.div
-                                className="w-12 h-12 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center"
-                                whileHover={{ rotate: 360 }}
-                                transition={{ duration: 0.6 }}
-                            >
-                                <i className={`fa-solid ${card.icon} text-xl`}></i>
-                            </motion.div>
-                            <p className="text-white/80 text-sm font-semibold">{card.label}</p>
-                        </div>
-                        <h1 className="text-4xl md:text-5xl font-black tracking-tight">{card.amount}</h1>
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* Select Amount Section */}
+            {/* Quick Select & Custom Amount */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -85,18 +156,18 @@ export default function Wallet() {
                         Select <span className="bg-gradient-to-r from-[#e50914] to-[#ff6b6b] bg-clip-text text-transparent">Amount</span>
                     </h1>
 
+                    {/* Quick Select */}
                     <div className="mb-8">
                         <p className="text-[#00e5ff] text-sm font-semibold uppercase tracking-widest mb-4">Quick Select</p>
                         <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
                             {quickAmounts.map((amt, i) => (
                                 <motion.button
                                     key={i}
-                                    onClick={() => setSelectedAmount(amt)}
-                                    className={`h-20 md:h-24 rounded-xl font-black text-base md:text-lg transition-all duration-300 border-2 ${
-                                        selectedAmount === amt
-                                            ? 'bg-gradient-to-br from-[#e50914] to-[#ff6b6b] border-[#e50914] shadow-[0_0_20px_rgba(229,9,20,0.6)] scale-105'
-                                            : 'border-white/20 bg-gray-900/60 text-white hover:border-[#e50914]/50'
-                                    }`}
+                                    onClick={() => { setSelectedAmount(amt); setInput(amt.replace('₹', '')); }}
+                                    className={`h-20 md:h-24 rounded-xl font-black text-base md:text-lg transition-all duration-300 border-2 ${selectedAmount === amt
+                                        ? 'bg-gradient-to-br from-[#e50914] to-[#ff6b6b] border-[#e50914] shadow-[0_0_20px_rgba(229,9,20,0.6)] scale-105'
+                                        : 'border-white/20 bg-gray-900/60 text-white hover:border-[#e50914]/50'
+                                        }`}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                 >
@@ -106,6 +177,7 @@ export default function Wallet() {
                         </div>
                     </div>
 
+                    {/* Custom Amount */}
                     <div className="space-y-3 mb-8">
                         <label htmlFor="customAmount" className="text-[#00e5ff] text-sm font-semibold uppercase tracking-widest">
                             Or Enter Custom Amount
@@ -113,6 +185,8 @@ export default function Wallet() {
                         <motion.input
                             id="customAmount"
                             type="text"
+                            value={Minput}
+                            onChange={(e) => setInput(e.target.value)}
                             placeholder="₹2000"
                             className="w-full border-2 border-white/20 bg-gray-900/60 text-white px-4 py-4 rounded-xl placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#e50914]/50 focus:border-[#e50914] transition-all duration-300 font-medium text-lg"
                             whileFocus={{ scale: 1.02 }}
@@ -121,25 +195,20 @@ export default function Wallet() {
                     </div>
 
                     {/* Summary */}
-                    <motion.div
-                        className="rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-950/80 px-6 md:px-8 py-6 md:py-8 space-y-4 mb-8 border border-white/10"
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: 0.1 }}
-                    >
+                    <motion.div className="rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-950/80 px-6 md:px-8 py-6 md:py-8 space-y-4 mb-8 border border-white/10">
                         <div className="flex justify-between items-center">
                             <p className="text-gray-400 font-medium">Amount</p>
-                            <p className="font-black text-lg">₹400</p>
+                            <p className="font-black text-lg">₹{Minput}</p>
                         </div>
                         <div className="h-px bg-white/10"></div>
                         <div className="flex justify-between items-center">
                             <p className="text-gray-400 font-medium">Processing Fee</p>
-                            <p className="font-semibold">₹10</p>
+                            <p className="font-semibold">₹{fee}</p>
                         </div>
                         <div className="h-px bg-white/10"></div>
                         <div className="flex justify-between items-center pt-2">
                             <p className="font-black text-lg">Total</p>
-                            <p className="bg-gradient-to-r from-[#e50914] to-[#ff6b6b] bg-clip-text text-transparent font-black text-2xl">₹410</p>
+                            <p className="bg-gradient-to-r from-[#e50914] to-[#ff6b6b] bg-clip-text text-transparent font-black text-2xl">₹{total}</p>
                         </div>
                     </motion.div>
 
@@ -147,116 +216,66 @@ export default function Wallet() {
                         className="w-full bg-gradient-to-r from-[#e50914] to-[#ff6b6b] hover:from-[#d40812] hover:to-[#ff4444] text-white font-black py-4 rounded-xl shadow-[0_0_20px_rgba(229,9,20,0.6)] transition-all duration-300 text-lg uppercase tracking-tight"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
+                        onClick={handleAddMoney}
                     >
-                        💳 Continue to Payment
+                        Continue to Payment
                     </motion.button>
-                </div>
-            </motion.div>
-
-            {/* Payment Methods */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="relative z-10 bg-gradient-to-b from-gray-900/80 to-gray-950/80 mx-6 md:mx-10 rounded-3xl p-8 md:p-12 border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.4)] backdrop-blur-sm max-w-7xl mx-auto mb-12"
-            >
-                <h1 className="text-3xl md:text-4xl font-black mb-8 tracking-tight">
-                    Payment <span className="bg-gradient-to-r from-[#e50914] to-[#ff6b6b] bg-clip-text text-transparent">Methods</span>
-                </h1>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {paymentMethods.map((method, i) => (
-                        <motion.div
-                            key={i}
-                            className="flex items-center gap-4 bg-gray-900/60 hover:bg-gray-900/80 border border-white/10 hover:border-[#e50914]/50 rounded-2xl px-6 py-5 transition-all duration-300 group cursor-pointer"
-                            whileHover={{ scale: 1.02, x: 4 }}
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.4, delay: i * 0.05 }}
-                        >
-                            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#e50914]/20 to-[#ff6b6b]/20 flex items-center justify-center group-hover:from-[#e50914]/40 group-hover:to-[#ff6b6b]/40 transition-all">
-                                <i className={`fa-brands ${method.icon} text-[#e50914] text-lg`}></i>
-                            </div>
-                            <div>
-                                <h3 className="font-black text-base group-hover:text-[#e50914] transition-colors">{method.name}</h3>
-                                <p className="text-gray-400 text-sm font-medium">{method.desc}</p>
-                            </div>
-                        </motion.div>
-                    ))}
                 </div>
             </motion.div>
 
             {/* Transaction History */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 mb-16"
-            >
-                <div className="flex items-center justify-between mb-8">
-                    <h1 className="text-3xl md:text-4xl font-black tracking-tight">
-                        Transaction <span className="bg-gradient-to-r from-[#e50914] to-[#ff6b6b] bg-clip-text text-transparent">History</span>
-                    </h1>
-                    <motion.button
-                        className="text-[#00e5ff] text-sm font-black hover:text-[#e50914] transition-colors uppercase tracking-widest"
-                        whileHover={{ scale: 1.05, x: 4 }}
-                    >
-                        View All →
-                    </motion.button>
-                </div>
+            <div className="overflow-x-auto relative z-10 max-w-7xl mx-auto px-6 md:px-10 mb-16">
+                <h1 className="text-3xl md:text-4xl font-black mb-6 tracking-tight">
+                    Transaction <span className="bg-gradient-to-r from-[#e50914] to-[#ff6b6b] bg-clip-text text-transparent">History</span>
+                </h1>
 
-                <div className="space-y-3">
-                    {transactions.map((item, index) => (
-                        <motion.div
-                            key={index}
-                            className="flex justify-between items-center bg-gradient-to-r from-gray-900/60 to-gray-950/60 hover:from-gray-900/80 hover:to-gray-950/80 px-6 py-5 rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-300 group"
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.3, delay: index * 0.05 }}
-                            whileHover={{ x: 4 }}
-                        >
-                            <div className="flex items-center gap-4 flex-1">
-                                <motion.div
-                                    className={`w-12 h-12 flex items-center justify-center rounded-xl font-black ${
-                                        item.type === "credit"
-                                            ? "bg-green-500/20 text-green-400"
-                                            : "bg-red-500/20 text-[#e50914]"
-                                    }`}
-                                    whileHover={{ rotate: 360 }}
-                                    transition={{ duration: 0.6 }}
-                                >
-                                    <i
-                                        className={`fa-solid ${
-                                            item.type === "credit" ? "fa-arrow-down" : "fa-arrow-up"
+                <motion.table
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="w-full text-left border-collapse bg-gray-900/60 rounded-2xl overflow-hidden"
+                >
+                    <thead className="bg-gray-900/80">
+                        <tr>
+                            <th className="px-6 py-3 text-gray-400 uppercase text-sm font-medium">Title</th>
+                            <th className="px-6 py-3 text-gray-400 uppercase text-sm font-medium">Date</th>
+                            <th className="px-6 py-3 text-gray-400 uppercase text-sm font-medium">Amount</th>
+                            <th className="px-6 py-3 text-gray-400 uppercase text-sm font-medium">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {transactions.reverse().map((item, index) => (
+                            <motion.tr
+                                key={index}
+                                className="border-b border-white/10 hover:bg-gray-800/50 transition-colors"
+                                initial={{ opacity: 0, x: -20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.3, delay: index * 0.05 }}
+                            >
+                                <td className="px-6 py-4 flex items-center gap-3">
+                                    <div className={`w-10 h-10 flex items-center justify-center rounded-full font-black ${item.type === "credit"
+                                        ? "bg-green-500/20 text-green-400"
+                                        : "bg-red-500/20 text-[#e50914]"
+                                        }`}>
+                                        <i className={`fa-solid ${item.type === "credit" ? "fa-arrow-down" : "fa-arrow-up"}`}></i>
+                                    </div>
+                                    <span className="font-black text-base">{item.title}</span>
+                                </td>
+                                <td className="px-6 py-4 text-gray-400 text-sm">{new Date(item.date).toLocaleString()}</td>
+                                <td className={`px-6 py-4 font-black ${item.type === "credit" ? "text-green-400" : "text-white"}`}>
+                                    ₹{item.amount}
+                                </td>
+                                <td
+                                    className={`px-6 py-4 text-xs font-bold uppercase tracking-wider ${item.status?.toLowerCase() === "approved" ? "text-green-500" : "text-yellow-400"
                                         }`}
-                                    ></i>
-                                </motion.div>
-                                <div>
-                                    <h2 className="font-black text-base group-hover:text-[#e50914] transition-colors">{item.title}</h2>
-                                    <p className="text-gray-500 text-sm font-medium">{item.date}</p>
-                                </div>
-                            </div>
-                            <div className="text-right">
-                                <p
-                                    className={`font-black text-base ${
-                                        item.type === "credit" ? "text-green-400" : "text-white"
-                                    }`}
                                 >
-                                    {item.amount}
-                                </p>
-                                <p
-                                    className={`text-xs font-bold uppercase tracking-wider ${
-                                        item.status === "Completed"
-                                            ? "text-green-500"
-                                            : "text-yellow-400"
-                                    }`}
-                                >
-                                    {item.status}
-                                </p>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-            </motion.div>
+                                    {item.status || "Pending"}
+                                </td>
+                            </motion.tr>
+                        ))}
+                    </tbody>
+                </motion.table>
+            </div>
         </div>
-    )
+    );
 }

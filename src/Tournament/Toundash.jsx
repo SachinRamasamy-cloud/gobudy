@@ -7,9 +7,9 @@ import Upcomming from './Upcomming';
 export default function Toundash() {
   return (
     <div>
-        <Tornaments />
-        <Live />
-        <Upcomming />
+      <Tornaments />
+      <Upcomming />
+      {/* <Live /> */}
     </div>
   )
 }

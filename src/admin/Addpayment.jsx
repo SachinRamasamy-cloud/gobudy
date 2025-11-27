@@ -108,7 +108,7 @@ const AdminPayments = () => {
                       <div className="flex items-center gap-4">
                         <div>
                           <p className="font-bold text-gray-900">{t.title || "Untitled Tournament"}</p>
-                          <p className="text-xs text-gray-500 mt-1">ID: {t.id}</p>
+                          <p className="text-xs text-gray-500 mt-1">ID: {t._id}</p>
                         </div>
                       </div>
                     </Td>

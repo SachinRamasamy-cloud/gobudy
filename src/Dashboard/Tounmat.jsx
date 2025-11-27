@@ -16,14 +16,12 @@ export default function Tounmat() {
 
 
 
-    const [tournaments,setTournaments] = useState([])
+    const [tournaments, setTournaments] = useState([])
     const [user, setUser] = useState(null);
     const [filter, setFilter] = useState("All");
     const [join, setjoin] = useState(false)
     const joined = user?.joined || [];
 
-
-    const progress = (tournaments.joined / tournaments.total) * 100;
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (!storedUser) return;
@@ -59,14 +57,10 @@ export default function Tounmat() {
 
     // // JOIN TOURNAMENT
     const handleJoin = async (t) => {
-        if (!user) {
-            alert("User not loaded");
-            return;
-        }
 
-        if (user.joined.includes(t._id)) {
+        const hasJoined = t.joinedP.some(p => String(p._id) === String(user._id));
+        if (hasJoined) {
             alert("Already joined this tournament");
-            setjoin(true);
             return;
         }
 
@@ -75,46 +69,34 @@ export default function Tounmat() {
             return;
         }
 
-        const joinedP = Array.isArray(t.joinedP)
-            ? t.joinedP.map(id => String(id))
-            : typeof t.joinedP === "string" && t.joinedP.trim() !== ""
-                ? t.joinedP.split(",").map(i => i.trim())
-                : [];
+        const updatedTournament = {
+            ...t,
+            joined: t.joined + 1,
+            joinedP: [...t.joinedP.map(p => p._id || p), user._id]
+        };
 
-        if (!joinedP.includes(String(user._id))) {
-            joinedP.push(String(user._id));
-        }
-
-        // Update user → deduct fee + add joined ID
         const updatedUser = {
             ...user,
             wallet: user.wallet - t.fee,
             joined: [...user.joined, t._id]
         };
 
-        // Update tournament joined count
-        const updatedTournament = {
-            joined: t.joined + 1,
-            joinedP: joinedP
-        };
-
         try {
             await updUser(user._id, updatedUser);
             await updTournament(t._id, updatedTournament);
 
-            // Update UI
             setUser(updatedUser);
             setTournaments(prev =>
                 prev.map(item => item._id === t._id ? updatedTournament : item)
             );
 
             alert("Joined Successfully!");
-
         } catch (error) {
-            console.log("failed problem",error);
+            console.log("failed problem", error);
             alert("Join failed");
         }
     };
+
     const navigate = useNavigate();
 
     return (
@@ -161,82 +143,84 @@ export default function Tounmat() {
                 ) : (
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-                            {tournaments.slice(0, 3).map((t, i) => (
-                                <div
-                                    key={i}
-                                    onClick={() => navigate(`/tournament/${t._id}`)}
-                                    className="w-full rounded-2xl overflow-hidden bg-gradient-to-b from-gray-900/80 to-gray-950/80 border border-white/10 cursor-pointer"
-                                >
-                                    {/* IMAGE */}
-                                    <div className="relative h-[150px] overflow-hidden">
-                                        <img
-                                            src={t.img}
-                                            alt={t.game}
-                                            className="w-full h-full object-cover"
-                                        />
-
-                                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/50" />
-
-                                        <span className="absolute top-3 left-3 px-3 py-1 rounded-md text-xs font-bold bg-[#00e5ff]">
-                                            {t.game}
-                                        </span>
-                                    </div>
-
-                                    {/* CONTENT */}
-                                    <div className="p-5 space-y-3">
-                                        <h3 className="text-lg font-bold text-white">{t.name}</h3>
-
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <div className="p-3 bg-gray-800/40 rounded-lg border border-gray-700/40">
-                                                <p className="text-gray-400 text-xs uppercase">Prize</p>
-                                                <h4 className="text-white font-bold text-lg">₹{t.prize}</h4>
-                                            </div>
-
-                                            <div className="p-3 bg-gray-800/40 rounded-lg border border-gray-700/40">
-                                                <p className="text-gray-400 text-xs uppercase">Players</p>
-                                                <h4 className="text-white font-bold text-lg">
-                                                    {t.joined}/{t.total}
-                                                </h4>
-                                            </div>
+                            {tournaments.slice(0, 3).map((t, i) => {
+                                const hasJoined = joined.some(j => j === t._id || j._id === t._id);
+                                return (
+                                    <div
+                                        key={i}
+                                        onClick={() => navigate(`/tournament/${t._id}`)}
+                                        className="w-full rounded-2xl overflow-hidden bg-gradient-to-b from-gray-900/80 to-gray-950/80 border border-white/10 cursor-pointer"
+                                    >
+                                        {/* IMAGE */}
+                                        <div className="relative h-[150px] overflow-hidden">
+                                            <img
+                                                src={t.img}
+                                                alt={t.game}
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/50" />
+                                            <span className="absolute top-3 left-3 px-3 py-1 rounded-md text-xs font-bold bg-[#00e5ff]">
+                                                {t.game}
+                                            </span>
                                         </div>
 
-                                        <p className="text-gray-400 text-xs uppercase">
-                                            Entry Fee: <span className="text-white font-bold">₹{t.fee}</span>
-                                        </p>
+                                        {/* CONTENT */}
+                                        <div className="p-5 space-y-3">
+                                            <h3 className="text-lg font-bold text-white">{t.name}</h3>
 
-                                        <div className="grid grid-cols-2 gap-3 pt-2">
-                                            <button
-                                                disabled={joined.includes(t.id) || t.status !== "upcomming"}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleJoin(t);
-                                                }}
-                                                className={`w-full py-2 rounded-lg text-sm font-bold uppercase ${joined.includes(t._id) || t.status !== "upcomming"
-                                                    ? "bg-gray-500 cursor-not-allowed"
-                                                    : "bg-gradient-to-r from-[#e50914] to-red-700 text-white"
-                                                    }`}
-                                            >
-                                                {t.status === "upcomming"
-                                                    ? joined.includes(t._id)
-                                                        ? "Joined"
-                                                        : "Join"
-                                                    : "Not available"}
-                                            </button>
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div className="p-3 bg-gray-800/40 rounded-lg border border-gray-700/40">
+                                                    <p className="text-gray-400 text-xs uppercase">Prize</p>
+                                                    <h4 className="text-white font-bold text-lg">₹{t.prize}</h4>
+                                                </div>
 
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    navigate(`/tournament/${t.id}`);
-                                                }}
-                                                className="w-full py-2 rounded-lg text-sm font-bold uppercase bg-black/40 text-white border border-white/20"
-                                            >
-                                                Details
-                                            </button>
+                                                <div className="p-3 bg-gray-800/40 rounded-lg border border-gray-700/40">
+                                                    <p className="text-gray-400 text-xs uppercase">Players</p>
+                                                    <h4 className="text-white font-bold text-lg">
+                                                        {t.joined}/{t.total}
+                                                    </h4>
+                                                </div>
+                                            </div>
+
+                                            <p className="text-gray-400 text-xs uppercase">
+                                                Entry Fee: <span className="text-white font-bold">₹{t.fee}</span>
+                                            </p>
+
+                                            <div className="grid grid-cols-2 gap-3 pt-2">
+                                                <button
+                                                    disabled={hasJoined || t.status !== "upcomming"}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleJoin(t);
+                                                    }}
+                                                    className={`w-full py-2 rounded-lg text-sm font-bold uppercase ${hasJoined || t.status !== "upcomming"
+                                                        ? "bg-gray-500 cursor-not-allowed"
+                                                        : "bg-gradient-to-r from-[#e50914] to-red-700 text-white"
+                                                        }`}
+                                                >
+                                                    {t.status === "upcomming"
+                                                        ? hasJoined
+                                                            ? "Joined"
+                                                            : "Join"
+                                                        : "Not available"}
+                                                </button>
+
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        navigate(`/tournament/${t._id}`);
+                                                    }}
+                                                    className="w-full py-2 rounded-lg text-sm font-bold uppercase bg-black/40 text-white border border-white/20"
+                                                >
+                                                    Details
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
+
                     </>
                 )}
             </Reveal>

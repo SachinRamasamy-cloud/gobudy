@@ -63,62 +63,45 @@ export default function Tounmat() {
 
 
     const handleJoin = async (t) => {
-        if (!user) {
-            alert("User not loaded");
-            return;
-        }
+    if (!user) return alert("User not loaded");
 
-        if (user.joined.includes(t._id)) {
-            alert("Already joined this tournament");
-            setjoin(true);
-            return;
-        }
+    // Check if already joined
+    const hasJoined = user.joined.some(j => j._id === t._id || j === t._id);
+    if (hasJoined) return alert("Already joined");
 
-        if (user.wallet < t.fee) {
-            alert("Not enough wallet balance");
-            return;
-        }
+    if (user.wallet < t.fee) return alert("Not enough balance");
 
-        const joinedP = Array.isArray(t.joinedP)
-            ? t.joinedP.map(id => String(id))
-            : typeof t.joinedP === "string" && t.joinedP.trim() !== ""
-                ? t.joinedP.split(",").map(i => i.trim())
-                : [];
+    // Update joinedP in tournament
+    const joinedP = Array.isArray(t.joinedP) ? t.joinedP.map(String) : [];
+    if (!joinedP.includes(String(user._id))) joinedP.push(String(user._id));
 
-        if (!joinedP.includes(String(user._id))) {
-            joinedP.push(String(user._id));
-        }
-
-        // Update user → deduct fee + add joined ID
+    try {
+        // Update backend
         const updatedUser = {
             ...user,
             wallet: user.wallet - t.fee,
-            joined: [...user.joined, t._id]
+            joined: [...user.joined, t._id]  // <-- push only ID
         };
 
-        // Update tournament joined count
         const updatedTournament = {
             joined: t.joined + 1,
-            joinedP: joinedP
+            joinedP
         };
 
-        try {
-            await updUser(user._id, updatedUser);
-            await updTournament(t._id, updatedTournament);
+        await updUser(user._id, updatedUser);
+        await updTournament(t._id, updatedTournament);
 
-            // Update UI
-            setUser(updatedUser);
-            setTournaments(prev =>
-                prev.map(item => item._id === t._id ? updatedTournament : item)
-            );
+        setUser(updatedUser);
+        setTournaments(prev => prev.map(item =>
+            item._id === t._id ? {...item, joinedP: joinedP, joined: t.joined + 1} : item
+        ));
 
-            alert("Joined Successfully!");
-
-        } catch (error) {
-            console.log("failed problem", error);
-            alert("Join failed");
-        }
-    };
+        alert("Joined Successfully!");
+    } catch (error) {
+        console.log(error);
+        alert("Join failed");
+    }
+};
 
     const navigate = useNavigate();
 

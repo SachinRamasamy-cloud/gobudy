@@ -30,12 +30,13 @@ export const getAllMatches = () => axios.get(`${base}/matches`)
 // Add match
 export const addMatch = (data) => axios.post(`${base}/matches`, data)
 // Delete match
-export const delMatch = (id) => axios.delete(`${base}/matches/${id}`)
+export const delMatch = (id) => axios.delete(`${base}/matches/${id}`);
 // Get match by ID
 export const getMatchById = (id) => axios.get(`${base}/matches/${id}`)
 // Update match
 export const updMatch = (id, data) => axios.put(`${base}/matches/${id}`, data)
-
+export const statMatch=(id,data)=>axios.put(`${base}/matches/status/${id}`,data)
+export const winMatch=(id,data)=>axios.put(`${base}/matches/winner/${id}`,data)
 
 // Get all videos
 export const getAllVideos = () => axios.get(`${base}/videos`)

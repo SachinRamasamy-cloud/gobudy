@@ -28,6 +28,7 @@ import Admvid from "./admin/Admvid";
 import AdminPayments from "./admin/Addpayment";
 import Tdet from "./Tournament/Tdet";
 import Live from "./Tournament/Live";
+import Admmatch from "./admin/Admmatch";
 
 // --- GoToTop Button ---
 const GoToTopButton = () => {
@@ -135,6 +136,7 @@ function App() {
         <Route index element={<AdmDash />} />
         <Route path="videos" element={<Admvid />} />
         <Route path="pay" element={<AdminPayments />} />
+        <Route path="match" element={<Admmatch />} />
       </Route>
 
       {/* Fallback */}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getAllMatches, delMatch, winMatch, updUser, getUserById, getMatchById, addMatch, updateMatchStatus } from '../../server/server';
+import { getAllTournaments, getTournamentById, updTournament, delTournament, updateTournamentStatus, winTournament, addTournament, getUserById, updUser } from '../../server/server';
+import { useNavigate } from 'react-router-dom';
 
 // Table header helper
 const Th = ({ children, className = "" }) => (
@@ -11,7 +12,7 @@ const Td = ({ children, className = "" }) => (
     <td className={`p-4 text-sm text-gray-700 ${className}`}>{children}</td>
 );
 
-export default function Admmatch() {
+export default function Admtournment() {
     const [matches, setMatches] = useState([]);
     const [selectedMatch, setSelectedMatch] = useState(null);
     const [showPopup, setShowPopup] = useState(false);
@@ -33,14 +34,17 @@ export default function Admmatch() {
         status: "upcoming",
         teams: []
     });
+    const navigate = useNavigate()
+    // save new match
     const saveNewMatch = async () => {
         try {
             // Prepare teams if needed (empty for now)
             const matchData = { ...newMatch, teams: [], joinedP: [] };
-            await addMatch(matchData); // make sure addMatch is imported from server
+            await addTournament(matchData); // make sure addMatch is imported from server
             alert("Match added successfully!");
             setShowAddPopup(false);
             setNewMatch({
+                img: "",
                 game: "",
                 name: "",
                 prize: "",
@@ -50,7 +54,9 @@ export default function Admmatch() {
                 date: "",
                 mode: "",
                 status: "upcoming",
-                teams: []
+                teams: [],
+                video: [],
+                Rules: ""
             });
             loadMatches(); // refresh the list
         } catch (err) {
@@ -62,7 +68,7 @@ export default function Admmatch() {
     // Load all matches
     const loadMatches = async () => {
         try {
-            const res = await getAllMatches();
+            const res = await getAllTournaments();
             setMatches(res.data);
         } catch (err) {
             console.error(err);
@@ -73,11 +79,19 @@ export default function Admmatch() {
         loadMatches();
     }, []);
 
+    // navigate
+    const handleDet = (id) => {
+        navigate("/admin/tournament-detail", {
+            state: { id }
+        });
+
+    }
+
     // Delete match
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this match?")) return;
         try {
-            await delMatch(id);
+            await delTournament(id);
             setMatches(prev => prev.filter(m => m._id !== id));
             alert("Match deleted");
         } catch (err) {
@@ -90,7 +104,7 @@ export default function Admmatch() {
     const handleEditClick = async (matchId) => {
         try {
             setLoadingMatch(true);
-            const res = await getMatchById(matchId);
+            const res = await getTournamentById(matchId);
             const match = res.data;
             setSelectedMatch(match);
             setWinTeam(match.winTeam || "");
@@ -119,7 +133,7 @@ export default function Admmatch() {
         if (!selectedMatch || !winTeam) return alert("Select a winning team");
 
         try {
-            await winMatch(selectedMatch._id, { teamId: winTeam });
+            await winTournament(selectedMatch._id, { teamId: winTeam });
 
             const team = selectedMatch.teams.find(t => t._id === winTeam);
             if (!team) throw new Error("Team not found");
@@ -168,7 +182,7 @@ export default function Admmatch() {
         if (!selectedMatch) return;
 
         try {
-            await updateMatchStatus(selectedMatch._id, { status });
+            await updateTournamentStatus(selectedMatch._id, { status });
             alert("Match status updated");
             setShowStatusPopup(false);
             closeAllPopups();
@@ -219,7 +233,8 @@ export default function Admmatch() {
                                 </tr>
                             ) : (
                                 matches.reverse().map((t) => (
-                                    <tr key={t._id} className="hover:bg-gray-50 transition-colors group">
+                                    <tr key={t._id}
+                                        className="hover:bg-gray-50 transition-colors group">
                                         <Td>
                                             <div className="flex flex-col">
                                                 <p className="font-bold text-[18px]">{t.game || "Untitled"} <span className="text-[15px]">({t.status})</span></p>
@@ -256,6 +271,12 @@ export default function Admmatch() {
                                                     className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
                                                 >
                                                     Delete
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDet(t._id)}
+                                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                                                >
+                                                    View
                                                 </button>
                                             </div>
                                         </Td>
@@ -383,7 +404,7 @@ export default function Admmatch() {
                                     <option value="">Select Team</option>
                                     {selectedMatch.teams.map(team => (
                                         <option key={team._id} value={team._id}>
-                                            {team.teamName} (Leader: {team.leader || "N/A"})
+                                            {team.teamName} (Leader: {team.leader?.name || "N/A"})
                                         </option>
                                     ))}
                                 </select>

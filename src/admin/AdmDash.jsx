@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { getAllPayments, getAllUsers, getAllVideos, getAllTournaments } from "../../server/server";
+import { getAllPayments, getAllUsers, getAllMatches, getAllVideos, getAllTournaments } from "../../server/server";
 
 export default function AdmDash() {
     const [data, setData] = useState({
@@ -16,10 +16,11 @@ export default function AdmDash() {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const [videoRes, tournRes, userRes, payres] = await Promise.all([
+                const [videoRes, tournRes, userRes, matchres, payres] = await Promise.all([
                     getAllVideos(),
                     getAllTournaments(),
                     getAllUsers(),
+                    getAllMatches(),
                     getAllPayments()
                 ]);
 
@@ -27,6 +28,7 @@ export default function AdmDash() {
                 console.log("Tournaments:", tournRes);
                 console.log("Users:", userRes);
                 console.log("Payments:", payres);
+                console.log("Match:", matchres);
 
                 const getSafeArray = (res) => {
                     if (!res) return [];
@@ -43,8 +45,8 @@ export default function AdmDash() {
                     tournaments: getSafeArray(tournRes),
                     users: getSafeArray(userRes),
                     payments: getSafeArray(payres),
-                    reels: [],  
-                    matches: [] 
+                    reels: [],
+                    matches: getSafeArray(matchres)
                 });
             } catch (error) {
                 console.error("Failed to load admin stats", error);
@@ -112,7 +114,7 @@ export default function AdmDash() {
                                 <Th>ID</Th><Th>Amount</Th><Th>Type</Th><Th>Status</Th>
                             </>}
                             {activeTab === 'matches' && <>
-                                <Th>Match ID</Th><Th>Map</Th><Th>Status</Th>
+                                <Th>Match Name</Th><Th>game</Th><Th>Players</Th><Th>Prize Pool</Th><Th>Status</Th>
                             </>}
                         </tr>
                     </thead>
@@ -161,8 +163,10 @@ export default function AdmDash() {
                                 </>}
 
                                 {activeTab === 'matches' && <>
-                                    <Td>{item.id}</Td>
-                                    <Td>{item.map || 'TBA'}</Td>
+                                    <Td>{item.name}</Td>
+                                    <Td>{item.game || 'TBA'}</Td>
+                                    <Td>{item.joined || 'TBA'}/{item.total || 'TBA'}</Td>
+                                    <Td>{item.prize || 'TBA'}</Td>
                                     <Td><Badge color="gray">{item.status || 'Pending'}</Badge></Td>
                                 </>}
                             </tr>

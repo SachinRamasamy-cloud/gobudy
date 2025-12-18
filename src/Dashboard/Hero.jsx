@@ -1,319 +1,177 @@
-// import Reveal from "../Reveal";
-// import React from "react";
-// import { motion } from "framer-motion";
-
-// export default function Hero() {
-//   return (
-//     <section className="py-12 lg:pt-10">
-//       <div className="container mx-auto px-6 lg:px-0 flex flex-col lg:flex-row items-start gap-8">
-
-//         {/* LEFT - Content */}
-//         <Reveal>
-//           <div
-//             initial={{ opacity: 0, x: -20 }}
-//             animate={{ opacity: 1, x: 0 }}
-//             transition={{ duration: 0.7 }}
-//             className="flex-1"
-//           >
-//             <div className="inline-block px-3 py-1 rounded-full bg-gradient-to-r from-cyan-600 to-red-600 text-white font-semibold text-xs mb-4">LIVE TOURNAMENTS</div>
-
-//             <h1
-//               initial={{ opacity: 0, y: 8 }}
-//               animate={{ opacity: 1, y: 0 }}
-//               transition={{ delay: 0.1 }}
-//               className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white"
-//             >
-//               Compete. Win. Build Your Legacy.
-//             </h1>
-
-//             <p
-//               initial={{ opacity: 0 }}
-//               animate={{ opacity: 1 }}
-//               transition={{ delay: 0.25 }}
-//               className="text-gray-300 text-base md:text-lg mt-4 max-w-xl"
-//             >
-//               Join the world's most advanced esports ecosystem. Compete in cinematic tournaments, rise through the ranks, and carve your name into the future of gaming.
-//             </p>
-
-//             <div
-//               initial={{ opacity: 0, y: 10 }}
-//               animate={{ opacity: 1, y: 0 }}
-//               transition={{ delay: 0.35 }}
-//               className="flex flex-wrap items-center gap-4 mt-6"
-//             >
-//               <button
-//                 whileHover={{ scale: 1.03 }}
-//                 className="px-6 py-3 rounded-lg bg-gradient-to-r from-red-600 to-red-700 text-white font-bold shadow-lg text-sm"
-//               >
-//                 START COMPETING
-//               </button>
-
-//               <button
-//                 whileHover={{ scale: 1.03 }}
-//                 className="px-6 py-3 rounded-lg border border-cyan-400 text-white font-semibold text-sm"
-//               >
-//                 VIEW TOURNAMENTS
-//               </button>
-//             </div>
-
-//             {/* Stats - stack on mobile (single column), row on md+ */}
-//             <div
-//               initial={{ opacity: 0, y: 12 }}
-//               animate={{ opacity: 1, y: 0 }}
-//               transition={{ delay: 0.5 }}
-//               className="flex flex-col md:flex-row gap-4 pt-8 w-full"
-//             >
-//               <div
-//                 whileHover={{ translateY: -5 }}
-//                 className="flex-1 px-5 py-4 bg-gradient-to-br from-cyan-800/20 to-cyan-700/10 border-l-4 border-cyan-400 rounded-lg"
-//               >
-//                 <div className="text-cyan-300 font-black text-2xl md:text-3xl">2.5M+</div>
-//                 <div className="text-gray-400 text-xs md:text-sm font-medium mt-1">Active Players</div>
-//               </div>
-
-//               <div
-//                 whileHover={{ translateY: -5 }}
-//                 className="flex-1 px-5 py-4 bg-gradient-to-br from-red-800/20 to-red-700/10 border-l-4 border-red-500 rounded-lg"
-//               >
-//                 <div className="text-red-400 font-black text-2xl md:text-3xl">$10M+</div>
-//                 <div className="text-gray-400 text-xs md:text-sm font-medium mt-1">Prize Pool</div>
-//               </div>
-
-//               <div
-//                 whileHover={{ translateY: -5 }}
-//                 className="flex-1 px-5 py-4 bg-gradient-to-br from-purple-800/20 to-purple-700/10 border-l-4 border-purple-400 rounded-lg"
-//               >
-//                 <div className="text-purple-300 font-black text-2xl md:text-3xl">18.5K</div>
-//                 <div className="text-gray-400 text-xs md:text-sm font-medium mt-1">Online Now</div>
-//               </div>
-//             </div>
-//           </div>
-//         </Reveal>
-//         {/* RIGHT - Hero Image */}
-//         <Reveal>
-//         <div
-//           initial={{ opacity: 0, x: 30 }}
-//           animate={{ opacity: 1, x: 0 }}
-//           transition={{ duration: 0.8 }}
-//           className="hidden lg:block w-[520px]"
-//         >
-//           <div className="rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-gradient-to-br from-red-700/30 to-cyan-700/20">
-//             <img src="/hero-image.png" alt="Esports Hero" className="w-full h-[420px] object-cover" />
-//           </div>
-//         </div>
-//         </Reveal>
-//       </div>
-//     </section >
-//   );
-// }
-
-import React from "react";
-import { motion } from "framer-motion";
-import Reveal from "../Reveal"; // keep your Reveal wrapper
+import React, { useContext, useState } from "react";
+import { UserContext } from "../comp/UserContext";
+import { getUserById } from "../../server/server";
+import { Link } from "react-router-dom";
 
 export default function Hero() {
-  // Images: include your uploaded file (local path) + 3 esports-y Unsplash images
-  const images = [
-    "/mnt/data/680dd17b-fbe8-4f7f-b80e-9792f2462abf.png", // user's uploaded image (used as one tile)
-    "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80", // neon gamer / arena
-    "https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?auto=format&fit=crop&w=1200&q=80", // player silhouette / rig
-    "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=80", // esports crowd / lights
-  ];
 
-  // Small reusable hexagon image component (SVG mask + neon border)
-  function Hex({ src, size = 180, glow = "red", className = "" }) {
-    // hexagon points for a regular hex centered in viewBox
-    const points = "50 1.7 92.3 25 92.3 75 50 98.3 7.7 75 7.7 25";
-    const strokeColor = glow === "red" ? "#ff3b3b" : "#1fb6ff";
-    const shadowFilterId = `glow-${strokeColor.replace("#", "")}`;
+  const { user, setUser } = useContext(UserContext);
 
-    return (
-      <svg
-        viewBox="0 0 100 100"
-        width={size}
-        height={size}
-        className={`inline-block ${className}`}
-        role="img"
-        aria-label="hexagon image"
-      >
-        <defs>
-          <clipPath id={`hex-clip-${src}`}>
-            <polygon points={points} />
-          </clipPath>
+  const LoadUser = async () => {
+    try {
+      const userId = localStorage.getItem("userId");
+      if (!userId) return;
 
-          <pattern
-            id={`img-pattern-${src}`}
-            patternUnits="objectBoundingBox"
-            width="100%"
-            height="100%"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="xMidYMid slice"
-          >
-            <image href={src} x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" />
-          </pattern>
+      const res = await getUserById(userId);
+      setUser(res?.data || {});
+      console.log("API RESPONSE:", res.data);
 
-          <filter id={shadowFilterId} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-            <feMerge>
-              <feMergeNode in="coloredBlur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
+    } catch (err) {
+      console.log("Failed to load user:", err);
+    }
+  };
 
-        {/* background subtle gradient */}
-        <rect x="0" y="0" width="100" height="100" rx="6" fill="transparent" />
+  const currentBalance = user?.wallet ?? 0;
 
-        {/* image clipped to hex */}
-        <polygon points={points} clipPath={`url(#hex-clip-${src})`} fill={`url(#img-pattern-${src})`} />
 
-        {/* neon stroke */}
-        <polygon
-          points={points}
-          fill="none"
-          stroke={strokeColor}
-          strokeWidth="2.2"
-          strokeLinejoin="round"
-          style={{ filter: `url(#${shadowFilterId})` }}
-          opacity="0.9"
-        />
-
-        {/* subtle inner glow */}
-        <polygon points={points} fill="none" stroke={strokeColor} strokeWidth="0.6" opacity="0.18" />
-      </svg>
-    );
-  }
+  const upcomingTournament = {
+    name: "Winter Clash Series",
+    date: "Jan 15, 2026",
+    time: "20:00 IST",
+    prize: "₹50,000",
+    status: "Registration Open",
+    image:
+      "https://images.unsplash.com/photo-1605902711622-cfb43c44367f?q=80&w=1200&auto=format&fit=crop",
+  };
 
   return (
-    <section className="relative py-12 lg:pt-10 bg-gradient-to-b from-black via-gray-900 to-black overflow-hidden">
-      <div className="container mx-auto px-6 lg:px-0 flex flex-col lg:flex-row items-start gap-8">
-        {/* LEFT - Content */}
-        <Reveal>
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7 }}
-            className="flex-1"
+    <section className="relative py-12 bg-black overflow-hidden border-b border-gray-800">
+      <div className="container mx-auto max-w-7xl px-4 md:px-6 relative z-10">
+
+        {/* Top Section: Greeting + Wallet + Actions */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-stretch">
+
+          {/* Greeting */}
+          <div className="flex flex-col justify-between">
+            <div>
+              <h1 className="text-4xl font-black text-white leading-snug">
+                Welcome back, <span className="text-red-500">
+                  {user?.name}</span>.
+              </h1>
+              <p className="text-gray-400 text-lg mt-3 max-w-sm">
+                Quick access to your funds and primary actions. Everything you need in one place.
+              </p>
+            </div>
+          </div>
+
+          {/* Wallet Tile */}
+          <div className="flex items-center">
+            <div
+              className="
+                w-full p-6 rounded-2xl
+                bg-gray-800/70 backdrop-blur-sm
+                border border-gray-700
+                shadow-lg shadow-black/50
+                hover:bg-gray-800 transition-all
+              "
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-gray-400 uppercase tracking-wider">
+                  Wallet Balance
+                </p>
+                <Link to="/withdraw">
+                  <span className="text-2xl text-cyan-400">
+                    <i className="fa-solid fa-money-bill-transfer text-xl"></i>
+                  </span>
+                </Link>
+              </div>
+
+              <p className="text-4xl font-bold text-cyan-400 mt-4">
+                ₹{currentBalance.toLocaleString('en-IN')}
+              </p>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex flex-col gap-4 justify-center">
+            <a
+              href="#"
+              className="
+                px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700
+                text-white font-bold text-sm uppercase text-center
+                shadow-md shadow-red-900/40 transition-all
+              "
+            >
+              Update Profile
+            </a>
+
+            <Link
+              to="/add-balance"
+              className="
+                px-6 py-3 rounded-xl border border-cyan-500/40
+                text-cyan-300 font-semibold text-sm uppercase text-center
+                bg-gray-900 hover:bg-gray-800
+                shadow-md shadow-black/40 transition-all
+              "
+            >
+              View Wallet
+            </Link>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent my-12" />
+
+        {/* Tournament Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+
+          {/* Poster */}
+          <div className="w-full">
+            <img
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuJombAn3KnI5mxryqTmsTh4G5DShDByRc7g&s"
+              alt="Tournament"
+              className="
+                w-full h-72 object-cover rounded-2xl
+                shadow-2xl border border-red-600/40
+              "
+            />
+          </div>
+
+          {/* Event Card */}
+          <div
+            className="
+              p-6 md:p-8 rounded-2xl
+              bg-gray-900/70 backdrop-blur-md
+              border border-gray-800
+              shadow-xl shadow-black/40
+              transition-all hover:bg-gray-900
+            "
           >
-            <div className="inline-block px-3 py-1 rounded-full bg-gradient-to-r from-cyan-600 to-red-600 text-white font-semibold text-xs mb-4">
-              LIVE TOURNAMENTS
+            <span className="text-xs font-semibold text-red-500 uppercase tracking-widest">
+              Event Alert
+            </span>
+
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white mt-1 leading-tight">
+              {upcomingTournament.name}
+            </h2>
+
+            <p className="text-gray-400 mt-2 text-md">
+              {upcomingTournament.date} •{" "}
+              <span className="text-cyan-400">{upcomingTournament.time}</span>
+            </p>
+
+            <div className="mt-6 border-t border-gray-700 pt-4">
+              <p className="text-sm text-gray-500 uppercase tracking-widest">
+                Guaranteed Prize Pool
+              </p>
+              <p className="text-4xl font-black text-cyan-400 mt-1">
+                {upcomingTournament.prize}
+              </p>
             </div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white"
+            <a
+              href="#"
+              className="
+                mt-8 px-6 py-3 block rounded-xl
+                bg-red-600 hover:bg-red-700
+                text-white font-bold text-sm uppercase text-center
+                shadow-lg shadow-red-900/40 transition-all
+              "
             >
-              Compete. <span className="text-red-500">Win</span>. Build Your Legacy.
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.25 }}
-              className="text-gray-300 text-base md:text-lg mt-4 max-w-xl"
-            >
-              Join the world&apos;s most advanced esports ecosystem. Compete in cinematic tournaments, rise through the ranks, and carve your name into the
-              future of gaming.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35 }}
-              className="flex flex-wrap items-center gap-4 mt-6"
-            >
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                className="px-6 py-3 rounded-lg bg-gradient-to-r from-red-600 to-red-700 text-white font-bold shadow-lg text-sm"
-              >
-                START COMPETING
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                className="px-6 py-3 rounded-lg border border-cyan-400 text-white font-semibold text-sm"
-              >
-                VIEW TOURNAMENTS
-              </motion.button>
-            </motion.div>
-
-            {/* Stats - stack on mobile (single column), row on md+ */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="flex flex-col md:flex-row gap-4 pt-8 w-full"
-            >
-              <motion.div
-                whileHover={{ translateY: -5 }}
-                className="flex-1 px-5 py-4 bg-gradient-to-br from-cyan-800/20 to-cyan-700/10 border-l-4 border-cyan-400 rounded-lg"
-              >
-                <div className="text-cyan-300 font-black text-2xl md:text-3xl">2.5M+</div>
-                <div className="text-gray-400 text-xs md:text-sm font-medium mt-1">Active Players</div>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ translateY: -5 }}
-                className="flex-1 px-5 py-4 bg-gradient-to-br from-red-800/20 to-red-700/10 border-l-4 border-red-500 rounded-lg"
-              >
-                <div className="text-red-400 font-black text-2xl md:text-3xl">$10M+</div>
-                <div className="text-gray-400 text-xs md:text-sm font-medium mt-1">Prize Pool</div>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ translateY: -5 }}
-                className="flex-1 px-5 py-4 bg-gradient-to-br from-purple-800/20 to-purple-700/10 border-l-4 border-purple-400 rounded-lg"
-              >
-                <div className="text-purple-300 font-black text-2xl md:text-3xl">18.5K</div>
-                <div className="text-gray-400 text-xs md:text-sm font-medium mt-1">Online Now</div>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </Reveal>
-
-        {/* RIGHT - Hexagon Image Composition */}
-        <Reveal>
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="hidden lg:flex lg:w-[520px] flex-col items-center justify-center relative"
-          >
-            {/* Decorative hex grid layout */}
-            <div className="relative w-[420px] h-[420px]">
-              {/* Top-left small */}
-              <div className="absolute left-0 top-6 transform -translate-x-6 -translate-y-6">
-                <Hex src={images[1]} size={140} glow="blue" className="hover:scale-105 transition-transform duration-300" />
-              </div>
-
-              {/* Top-right medium */}
-              <div className="absolute right-0 top-0 transform translate-x-6 -translate-y-4">
-                <Hex src={images[2]} size={180} glow="red" className="hover:scale-105 transition-transform duration-300" />
-              </div>
-
-              {/* Center big */}
-              <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <Hex src={images[0]} size={220} glow="blue" className="hover:scale-102 transition-transform duration-300 shadow-2xl" />
-              </div>
-
-              {/* Bottom-right small */}
-              <div className="absolute right-2 bottom-6 transform translate-x-6 translate-y-4">
-                <Hex src={images[3]} size={120} glow="red" className="hover:scale-105 transition-transform duration-300" />
-              </div>
-
-              {/* subtle background geometric shapes - using simple divs for depth */}
-              <div className="absolute -left-16 -top-10 w-48 h-48 rounded-2xl border border-white/6 transform rotate-12 blur-[8px] opacity-20" />
-              <div className="absolute right-[-28px] bottom-[-16px] w-64 h-64 rounded-2xl border border-white/6 transform -rotate-6 blur-[8px] opacity-18" />
-            </div>
-
-            {/* optional caption under images */}
-            <div className="mt-6 text-center text-gray-300 text-sm max-w-xs">
-              <span className="inline-block px-3 py-1 rounded-full bg-white/6 text-xs font-semibold">FEATURED HIGHLIGHTS</span>
-            </div>
-          </motion.div>
-        </Reveal>
+              {upcomingTournament.status}
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   );

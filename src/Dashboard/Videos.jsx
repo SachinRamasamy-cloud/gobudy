@@ -19,7 +19,7 @@ export default function Videos() {
 
             const res =await getAllVideos()
             const allvideo = res.data;
-            const filtered = allvideo.filter(v => v.type === "highlight")
+            const filtered = allvideo.filter(v => v.tag === "Highlight")
             setVideos(filtered)
         }
         fetchvideo()
@@ -130,7 +130,7 @@ export default function Videos() {
                                     className="absolute top-4 right-4"
                                 >
                                     <span className="bg-black/80 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 bg-red-500 rounded-lg shadow-lg border border-white/10">
-                                        {v.type}
+                                        {v.tag}
                                     </span>
                                 </div>
 

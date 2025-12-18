@@ -1,36 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { Routes, Route, Navigate, Outlet, Link, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-
-// Components
+import "./index.css";
+import Matchdet from "./match/Matchdet";
+import Match from "./Dashboard/Match";
 import Head from "./comp/Head";
 import Nav from "./comp/Nav";
 import Footer from "./comp/Footer";
 import Preload from "./comp/Preload";
-
-// Pages / Dashboards
+import Tdet from "./Tournament/Tdet";
+import Live from "./Tournament/Live";
+import Toundash from "./Tournament/Toundash";
 import Hero from "./Dashboard/Hero";
 import Topgm from "./Dashboard/Topgm";
 import Tounmat from "./Dashboard/Tounmat";
 import Players from "./Dashboard/Players";
 import Videos from "./Dashboard/Videos";
 import Reels from "./Dashboard/Reels";
-import Match from "./Dashboard/Match";
 import ReelsPage from "./Dashboard/Reelscard";
-import Wallet from "./page2/Wallet";
-import Toundash from "./Tournament/Toundash";
-import Video from "./videos/Video";
-import LoginRegister from "./auth/Login";
-
-// Admin Pages
-import AdmDash from "./admin/AdmDash";
 import Admvid from "./admin/Admvid";
 import AdminPayments from "./admin/Addpayment";
-import Tdet from "./Tournament/Tdet";
-import Live from "./Tournament/Live";
 import Admmatch from "./admin/Admmatch";
+import AdmDash from "./admin/AdmDash";
+import Video from "./videos/Video";
+import Wallet from "./page2/Wallet";
+import LoginRegister from "./auth/Login";
+import Landing from "./landing/Landing";
+import { FaChartBar, FaVideo, FaUsers, FaTrophy, FaGamepad, FaCreditCard } from "react-icons/fa";
+import Withdraw from "./page2/Withdraw";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Admredeem from "./admin/Admredeem";
+import Admtournment from "./admin/Admtournment";
+import Admtorndet from "./admin/Admtorndet";
 
-// --- GoToTop Button ---
+
+// Scroll to top button
 const GoToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -76,26 +81,143 @@ const UserLayout = () => (
   </>
 );
 
-const AdminLayout = () => (
-  <div className="min-h-screen bg-gray-100 text-white">
-    <header className="p-4 bg-black/50 border-b border-white/10 flex justify-between items-center">
-      <h1 className="text-xl font-bold text-[#e50914]">Admin Dashboard</h1>
-      <button onClick={() => window.history.back()} className="text-sm text-gray-400 hover:text-white">
-        Exit
-      </button>
-    </header>
-    <main className="p-4">
-      <Outlet />
-    </main>
-    <footer className="p-4 text-center text-gray-500 text-sm border-t border-white/10 mt-8">
-      Admin Panel &copy; {new Date().getFullYear()}
-    </footer>
-  </div>
-);
+const AdminLayout = () => {
+  const { pathname } = useLocation();
 
-// --- Main App ---
+  const isActive = (path) => pathname.includes(path);
+
+  return (
+    <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans">
+      {/* Side Navigation Bar */}
+      <aside className="w-64 bg-white border-r border-slate-200 flex flex-col hidden md:flex">
+        <div className="p-6 border-b border-slate-100 flex items-center gap-3">
+          <div className="w-8 h-8 bg-red-600 rounded-lg flex-shrink-0"></div>
+          <h1 className="text-lg font-bold tracking-tight">
+            Admin<span className="text-red-600">Pro</span>
+          </h1>
+        </div>
+
+        <nav className="flex-1 p-4 space-y-1">
+          {/* Dashboard */}
+          <Link
+            to="/admin"
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all
+              ${isActive("/admin")
+                ? "bg-red-50 text-red-700"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+          >
+            <FaChartBar className={`w-5 h-5 ${isActive("/admin")}`} />
+            <span>Dashboard</span>
+          </Link>
+
+          {/* Videos */}
+          <Link
+            to="/admin/videos"
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+              ${isActive("/admin/videos")
+                ? "bg-red-50 text-red-700"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+          >
+            <FaVideo className={`w-5 h-5 ${isActive("/admin/videos") ? "text-red-700" : ""}`} />
+            <span>Videos</span>
+          </Link>
+
+          {/* Payments */}
+          <Link
+            to="/admin/pay"
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+              ${isActive("/admin/pay")
+                ? "bg-red-50 text-red-700"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+          >
+            <FaCreditCard className={`w-5 h-5 ${isActive("/admin/pay") ? "text-red-700" : ""}`} />
+            <span>Payments</span>
+          </Link>
+
+          {/* Matches */}
+          <Link
+            to="/admin/match"
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+              ${isActive("/admin/match")
+                ? "bg-red-50 text-red-700"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+          >
+            <FaGamepad className={`w-5 h-5 ${isActive("/admin/match") ? "text-red-700" : ""}`} />
+            <span>Matches</span>
+          </Link>
+          {/* redeem */}
+          <Link
+            to="/admin/redeem"
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+              ${isActive("/admin/redeem")
+                ? "bg-red-50 text-red-700"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+          >
+            <FaCreditCard className={`w-5 h-5 ${isActive("/admin/pay") ? "text-red-700" : ""}`} />
+            <span>Redeem Codes</span>
+          </Link>
+          {/* tournament */}
+
+          <Link
+            to="/admin/tournment"
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+              ${isActive("/admin/tournment")
+                ? "bg-red-50 text-red-700"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+          >
+            <FaTrophy className={`w-5 h-5 ${isActive("/admin/tournment") ? "text-red-700" : ""}`} />
+            <span>Tounament</span>
+          </Link>
+        </nav>
+
+        <div className="p-4 border-t border-slate-100">
+          <button
+            onClick={() => window.history.back()}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-slate-200 rounded-xl text-sm font-medium hover:bg-slate-50 transition-all"
+          >
+            Exit Panel
+          </button>
+        </div>
+      </aside>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 md:px-8 flex items-center justify-between sticky top-0 z-10">
+          <div className="text-sm text-slate-500 truncate">
+            Welcome back, <span className="font-semibold text-slate-900">Admin</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="w-8 h-8 bg-slate-200 rounded-full"></div>
+          </div>
+        </header>
+
+        <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-6xl w-full mx-auto">
+          <div className="mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold">Page Overview</h2>
+            <p className="text-slate-500 text-sm">
+              Manage your video content and tags below.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 min-h-[50vh]">
+            <Outlet />
+          </div>
+
+          <footer className="mt-8 sm:mt-12 pb-6 text-center text-slate-400 text-xs uppercase tracking-widest">
+            Admin Panel &copy; {new Date().getFullYear()} • Control Center
+          </footer>
+        </main>
+      </div>
+    </div>
+  );
+};
+
 function App() {
-  const [navOpen, setNavOpen] = useState(false);
   const [load, setLoad] = useState(true);
 
   useEffect(() => {
@@ -106,42 +228,53 @@ function App() {
   if (load) return <Preload />;
 
   return (
-    <Routes>
-      {/* User Routes */}
-      <Route element={<UserLayout />}>
-        <Route path="/" element={
-          <>
-            <Hero />
-            <Topgm />
-            <Tounmat />
-            <Players />
-            <Videos />
-            {/* <Reels /> */}
-            <Match />
-          </>
-        } />
-        <Route path="/reel/:id" element={<ReelsPage />} />
-        <Route path="/add-balance" element={<Wallet />} />
-        <Route path="/tournaments" element={<Toundash />} />
-        <Route path="/tournament/:id" element={<>
-          <Tdet />
-          <Live />
-        </>} />
-        <Route path="/all-video" element={<Video />} />
-        <Route path="/login" element={<LoginRegister />} />
-      </Route>
+    <>
+      <Routes>
+        {/* User Routes */}
 
-      {/* Admin Routes */}
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<AdmDash />} />
-        <Route path="videos" element={<Admvid />} />
-        <Route path="pay" element={<AdminPayments />} />
-        <Route path="match" element={<Admmatch />} />
-      </Route>
+        <Route element={<UserLayout />}>
+          <Route path="/" element={
+            <>
+              <Hero />
+              <Topgm />
+              <Tounmat />
+              <Players />
+              <Videos />
+              {/* <Reels /> */}
+              <Match />
+            </>
+          } />
+          <Route path="/reel/:id" element={<ReelsPage />} />
+          <Route path="/add-balance" element={<Wallet />} />
+          <Route path="/tournaments" element={<Toundash />} />
+          <Route path="/match/:matchId" element={<Matchdet />} />
+          <Route path="/tournament/:id" element={
+            <>
+              <Tdet />
+              <Live />
+            </>
+          } />
+          <Route path="/all-video" element={<Video />} />
+          <Route path="/withdraw" element={<Withdraw />} />
+          <Route path="/login" element={<LoginRegister />} />
+        </Route>
 
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdmDash />} />
+          <Route path="videos" element={<Admvid />} />
+          <Route path="pay" element={<AdminPayments />} />
+          <Route path="match" element={<Admmatch />} />
+          <Route path="tournament-detail" element={<Admtorndet />} />
+          <Route path="redeem" element={<Admredeem />} />
+          <Route path="tournment" element={<Admtournment />} />
+        </Route>
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+      <ToastContainer />
+    </>
   );
 }
 

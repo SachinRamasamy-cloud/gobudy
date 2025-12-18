@@ -8,6 +8,7 @@ import {
     updUser
 } from '../../server/server.js'
 import { Link, useNavigate } from "react-router-dom";
+import { FaGamepad, FaTimes } from "react-icons/fa";
 
 export default function Tounmat() {
     const ACCENT = "#E50914"; // red accent
@@ -17,83 +18,116 @@ export default function Tounmat() {
 
 
     const [tournaments, setTournaments] = useState([])
-    const [user, setUser] = useState(null);
-    const [filter, setFilter] = useState("All");
-    const [join, setjoin] = useState(false)
-    const joined = user?.joined || [];
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [step, setStep] = useState(1);
 
+    const [teamName, setTeamName] = useState("");
+    const [teamCode, setTeamCode] = useState("");
+    const [mode, setMode] = useState("create"); // "create" or "join"
+
+    const [user, setUser] = useState(null);
+    const [selectedMatch, setSelectedMatch] = useState(null);
+
+
+    const handleOpenModal = (matchObj) => {
+        setSelectedMatch(matchObj);
+        setIsModalOpen(true);
+        setStep(1);
+        setTeamName("");
+        setTeamCode("");
+        setMode("create");
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setStep(1);
+        setTeamName("");
+        setTeamCode("");
+        setMode("create");
+        setSelectedMatch(null);
+    };
+
+    // Load user
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (!storedUser) return;
 
         const localUser = JSON.parse(storedUser);
-        console.log(localUser._id)
+
         getUserById(localUser._id)
-            .then(res => {
-                // ensure joined exists
+            .then((res) => {
                 const safeUser = {
                     ...res.data,
-                    joined: res.data.joined || [], // default empty array
-                    wallet: res.data.wallet || 0,  // default 0 if missing
+                    joined: res.data.joined || [],
+                    wallet: res.data.wallet || 0,
                 };
                 setUser(safeUser);
             })
-            .catch(err => console.log("User fetch failed", err));
+            .catch((err) => console.log("User fetch failed", err));
     }, []);
+
+    // Load matches
+    const loadData = async () => {
+        const res = await getAllTournaments();
+        setTournaments(res.data);
+    };
 
     useEffect(() => {
+        loadData();
     }, []);
 
-    // Load tournaments
-    useEffect(() => {
-        getAllTournaments()
-            .then(res => {
-                const upcomming = res.data.filter((t) => t.status === "upcomming");
-                setTournaments(upcomming);
-            })
-            .catch(err => console.log("Tournaments fetch failed", err));
-    }, []);
+    // JOIN / CREATE TEAM LOGIC
+    const handleJoin = async () => {
+        if (!selectedMatch) return alert("Tournment not selected!");
 
-
-    // // JOIN TOURNAMENT
-    const handleJoin = async (t) => {
-
-        const hasJoined = t.joinedP.some(p => String(p._id) === String(user._id));
-        if (hasJoined) {
-            alert("Already joined this tournament");
-            return;
+        // Wallet check
+        if (user.wallet < Number(selectedMatch.fee)) {
+            return alert("Not enough wallet balance");
         }
 
-        if (user.wallet < t.fee) {
-            alert("Not enough wallet balance");
-            return;
+        const updatedMatch = { ...selectedMatch };
+        const updatedUser = { ...user, joined: [...user.joined, selectedMatch._id], wallet: user.wallet - Number(selectedMatch.fee) };
+
+        if (mode === "join") {
+            if (!teamCode.trim()) return alert("Enter team code");
+
+            const team = updatedMatch.teams.find((t) => t.teamCode === teamCode.toUpperCase());
+            if (!team) return alert("Invalid team code");
+            if (team.isFull) return alert("Team is full");
+
+            if (team.members.includes(user._id)) return alert("You already joined this team");
+
+            team.members.push(user._id);
+            if (team.members.length >= 5) team.isFull = true; // max team size
+        } else {
+            // Create new team
+            if (!teamName.trim()) return alert("Enter team name");
+
+            const newTeam = {
+                teamName,
+                leader: user._id,
+                members: [user._id],
+                teamCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
+                isFull: false,
+            };
+
+            updatedMatch.teams.push(newTeam);
         }
 
-        const updatedTournament = {
-            ...t,
-            joined: t.joined + 1,
-            joinedP: [...t.joinedP.map(p => p._id || p), user._id]
-        };
-
-        const updatedUser = {
-            ...user,
-            wallet: user.wallet - t.fee,
-            joined: [...user.joined, t._id]
-        };
+        updatedMatch.joined = Number(updatedMatch.joined) + 1;
 
         try {
+            await updTournament(updatedMatch._id, updatedMatch);
             await updUser(user._id, updatedUser);
-            await updTournament(t._id, updatedTournament);
 
+            setTournaments((prev) => prev.map((m) => (m._id === selectedMatch._id ? updatedMatch : m)));
             setUser(updatedUser);
-            setTournaments(prev =>
-                prev.map(item => item._id === t._id ? updatedTournament : item)
-            );
 
-            alert("Joined Successfully!");
-        } catch (error) {
-            console.log("failed problem", error);
-            alert("Join failed");
+            alert(mode === "join" ? "Joined team successfully!" : "Team created & joined successfully!");
+            handleCloseModal();
+        } catch (err) {
+            console.log(err);
+            alert("Failed to join match");
         }
     };
 
@@ -126,13 +160,11 @@ export default function Tounmat() {
                         <p className="text-gray-400 text-sm mt-3 max-w-2xl">Join competitive gaming events and showcase your skills on the grand stage</p>
                     </div>
                     <Link to="/tournaments">
-                        <a
-                            whileHover={{ scale: 1.05, x: 5 }}
-                            whileTap={{ scale: 0.95 }}
+                        <p
                             className="text-sm text-white/90 px-5 py-2.5 rounded-lg border border-[#e50914]/30 hover:border-[#e50914] hover:bg-[#e50914]/10 transition-all font-semibold"
                         >
                             View all →
-                        </a>
+                        </p>
 
                     </Link>
                 </div>
@@ -144,7 +176,7 @@ export default function Tounmat() {
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
                             {tournaments.slice(0, 3).map((t, i) => {
-                                const hasJoined = joined.some(j => j === t._id || j._id === t._id);
+                                // const hasJoined = joined.some(j => j === t._id || j._id === t._id);
                                 return (
                                     <div
                                         key={i}
@@ -188,21 +220,18 @@ export default function Tounmat() {
 
                                             <div className="grid grid-cols-2 gap-3 pt-2">
                                                 <button
-                                                    disabled={hasJoined || t.status !== "upcomming"}
                                                     onClick={(e) => {
+                                                        e.preventDefault();
                                                         e.stopPropagation();
-                                                        handleJoin(t);
+                                                        handleOpenModal(t);
                                                     }}
-                                                    className={`w-full py-2 rounded-lg text-sm font-bold uppercase ${hasJoined || t.status !== "upcomming"
+                                                    disabled={user && t.teams.some(team => team.members.includes(user._id))}
+                                                    className={`w-full py-2 font-black rounded-lg transition-all active:scale-[0.98] shadow-lg ${user && t.teams.some(team => team.members.includes(user._id))
                                                         ? "bg-gray-500 cursor-not-allowed"
-                                                        : "bg-gradient-to-r from-[#e50914] to-red-700 text-white"
-                                                        }`}
+                                                        : "bg-red-600 hover:bg-red-700 shadow-red-900/20"
+                                                        } text-white`}
                                                 >
-                                                    {t.status === "upcomming"
-                                                        ? hasJoined
-                                                            ? "Joined"
-                                                            : "Join"
-                                                        : "Not available"}
+                                                    {user && t.teams.some(team => team.members.includes(user._id)) ? "Joined" : "Register"}
                                                 </button>
 
                                                 <button
@@ -224,7 +253,108 @@ export default function Tounmat() {
                     </>
                 )}
             </Reveal>
+            {/* Modal */}
+            {isModalOpen && selectedMatch && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
+                    <div className="bg-neutral-900 border border-neutral-800 w-full max-w-md rounded-2xl p-8 relative shadow-2xl">
+                        <button
+                            onClick={handleCloseModal}
+                            className="absolute top-4 right-4 text-neutral-500 hover:text-white transition-colors"
+                        >
+                            <FaTimes size={20} />
+                        </button>
 
+                        {step === 1 ? (
+                            <div className="text-center text-white">
+                                <div className="w-16 h-16 bg-red-600/10 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <FaGamepad size={30} />
+                                </div>
+                                <h3 className="text-2xl font-black mb-2">Join Confirmation</h3>
+                                <p className="text-neutral-400 mb-8 text-sm">
+                                    Review match rules before confirming your registration.
+                                </p>
+                                <button
+                                    onClick={() => setStep(2)}
+                                    className="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-black rounded-xl shadow-lg shadow-red-900/40"
+                                >
+                                    Confirm Registration
+                                </button>
+                            </div>
+                        ) : (
+                            <div>
+                                <div className="flex gap-4 mb-6">
+                                    <button
+                                        className={`flex-1 py-2 rounded-xl font-bold ${mode === "create" ? "bg-red-600 text-white" : "bg-neutral-800 text-neutral-400"
+                                            }`}
+                                        onClick={() => setMode("create")}
+                                    >
+                                        Create Team
+                                    </button>
+                                    <button
+                                        className={`flex-1 py-2 rounded-xl font-bold ${mode === "join" ? "bg-red-600 text-white" : "bg-neutral-800 text-neutral-400"
+                                            }`}
+                                        onClick={() => setMode("join")}
+                                    >
+                                        Join Team
+                                    </button>
+                                </div>
+
+                                {mode === "create" ? (
+                                    <div className="mb-6">
+                                        <label className="text-[10px] font-bold uppercase text-neutral-500 mb-2 block tracking-widest">
+                                            Enter Squad Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            autoFocus
+                                            value={teamName}
+                                            onChange={(e) => setTeamName(e.target.value)}
+                                            placeholder="E.g. RED_ZONE_ELITE"
+                                            className="w-full bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="mb-6">
+                                        <label className="text-[10px] font-bold uppercase text-neutral-500 mb-2 block tracking-widest">
+                                            Enter Team Code
+                                        </label>
+                                        <input
+                                            type="text"
+                                            autoFocus
+                                            value={teamCode}
+                                            onChange={(e) => setTeamCode(e.target.value)}
+                                            placeholder="E.g. ABC123"
+                                            className="w-full bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                                        />
+                                    </div>
+                                )}
+                                {/* 
+                <button
+                  onClick={handleJoin}
+                  className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl transition-all disabled:opacity-30 disabled:grayscale"
+                >
+                  Finalize Entry
+                </button> */}
+                                <button
+                                    onClick={handleJoin}
+                                    disabled={
+                                        (mode === "create" && !teamName.trim()) ||
+                                        (mode === "join" && !teamCode.trim()) ||
+                                        selectedMatch.teams.some(team => team.members.includes(user._id))
+                                    }
+                                    className={`w-full py-4 ${selectedMatch.teams.some(team => team.members.includes(user._id))
+                                        ? "bg-green-600 hover:bg-green-600"
+                                        : "bg-blue-600 hover:bg-blue-700"
+                                        } text-white font-black rounded-xl transition-all disabled:opacity-30 disabled:grayscale`}
+                                >
+                                    {selectedMatch.teams.some(team => team.members.includes(user._id)) ? "Joined" : "Finalize Entry"}
+                                </button>
+
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </section >
     )
 }

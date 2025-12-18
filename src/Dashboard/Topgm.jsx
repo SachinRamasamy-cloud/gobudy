@@ -41,10 +41,6 @@ export default function Topgm() {
       <Reveal>
         {/* Header */}
         <div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
           className="flex items-center justify-between mb-12"
         >
           <div>
@@ -62,8 +58,6 @@ export default function Topgm() {
             {/* Left Button */}
             <button
               onClick={() => scroll(-300)}
-              whileHover={{ scale: 1.1, boxShadow: "0 0 20px rgba(229,9,20,0.5)" }}
-              whileTap={{ scale: 0.95 }}
               className="w-12 h-12 rounded-xl bg-black/40 border border-white/10 flex items-center justify-center cursor-pointer
                 hover:bg-[#E50914] hover:border-[#E50914] transition-all focus:outline-none focus:ring-2 focus:ring-[#E50914]"
               aria-label="Scroll left"
@@ -74,8 +68,6 @@ export default function Topgm() {
             {/* Right Button */}
             <button
               onClick={() => scroll(300)}
-              whileHover={{ scale: 1.1, boxShadow: "0 0 20px rgba(229,9,20,0.5)" }}
-              whileTap={{ scale: 0.95 }}
               className="w-12 h-12 rounded-xl bg-black/40 border border-white/10 flex items-center justify-center cursor-pointer
                 hover:bg-[#E50914] hover:border-[#E50914] transition-all focus:outline-none focus:ring-2 focus:ring-[#E50914]"
               aria-label="Scroll right"

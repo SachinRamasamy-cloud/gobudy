@@ -1,20 +1,49 @@
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import "./Main.css";
 import Reveal from "../Reveal";
 import {
-  getAllMatches,
-  getUserById,
-  updMatch,
-  updUser
-} from "../../server/server";
+  FaTrophy,
+  FaUsers,
+  FaClock,
+  FaDollarSign,
+  FaTimes,
+  FaGamepad,
+} from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { getAllMatches, getUserById, updMatch, updUser } from "../../server/server";
 
-export default function Match() {
-  const [hoveredMatch, setHoveredMatch] = useState(null);
-  const [matchs, setmatchs] = useState([]);
-  const [user, setuser] = useState(null);
-  const joined = user?.joinedM || [];
+const Match = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [step, setStep] = useState(1);
 
+  const [teamName, setTeamName] = useState("");
+  const [teamCode, setTeamCode] = useState("");
+  const [mode, setMode] = useState("create"); // "create" or "join"
+
+  const [matches, setMatches] = useState([]);
+  const [user, setUser] = useState(null);
+  const [selectedMatch, setSelectedMatch] = useState(null);
+
+  const ACCENT = "#E50914";
+
+  const handleOpenModal = (matchObj) => {
+    setSelectedMatch(matchObj);
+    setIsModalOpen(true);
+    setStep(1);
+    setTeamName("");
+    setTeamCode("");
+    setMode("create");
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setStep(1);
+    setTeamName("");
+    setTeamCode("");
+    setMode("create");
+    setSelectedMatch(null);
+  };
+
+  // Load user
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (!storedUser) return;
@@ -22,290 +51,298 @@ export default function Match() {
     const localUser = JSON.parse(storedUser);
 
     getUserById(localUser._id)
-      .then(res => {
+      .then((res) => {
         const safeUser = {
           ...res.data,
-          joinedM: res.data.joinedM || [],
-          wallet: res.data.wallet || 0
+          joined: res.data.joined || [],
+          wallet: res.data.wallet || 0,
         };
-        setuser(safeUser);
+        setUser(safeUser);
       })
-      .catch(err => console.log("User fetch failed", err));
+      .catch((err) => console.log("User fetch failed", err));
   }, []);
+
+  // Load matches
+  const loadData = async () => {
+    const res = await getAllMatches();
+    setMatches(res.data);
+  };
 
   useEffect(() => {
-    getAllMatches()
-      .then(res => {
-        const upcomming = res.data.filter(t => t.status === "upcomming");
-        setmatchs(upcomming);
-      })
-      .catch(err => console.log("Match fetch failed", err));
+    loadData();
   }, []);
 
-  const handlejoin = async t => {
-    if (!user) {
-      alert("User not loaded");
-      return;
+  // JOIN / CREATE TEAM LOGIC
+  const handleJoin = async () => {
+    if (!selectedMatch) return alert("Match not selected!");
+
+    // Wallet check
+    if (user.wallet < Number(selectedMatch.fee)) {
+      return alert("Not enough wallet balance");
     }
 
-    const hasJoined = t.joinedP.some(p => String(p._id) === String(user._id));
-    if (hasJoined) {
-      alert("Already joined this Match");
-      return;
+    const updatedMatch = { ...selectedMatch };
+    const updatedUser = { ...user, joined: [...user.joined, selectedMatch._id], wallet: user.wallet - Number(selectedMatch.fee) };
+
+    if (mode === "join") {
+      if (!teamCode.trim()) return alert("Enter team code");
+
+      const team = updatedMatch.teams.find((t) => t.teamCode === teamCode.toUpperCase());
+      if (!team) return alert("Invalid team code");
+      if (team.isFull) return alert("Team is full");
+
+      if (team.members.includes(user._id)) return alert("You already joined this team");
+
+      team.members.push(user._id);
+      if (team.members.length >= 5) team.isFull = true; // max team size
+    } else {
+      // Create new team
+      if (!teamName.trim()) return alert("Enter team name");
+
+      const newTeam = {
+        teamName,
+        leader: user._id,
+        members: [user._id],
+        teamCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
+        isFull: false,
+      };
+
+      updatedMatch.teams.push(newTeam);
     }
 
-    if (user.wallet < t.fee) {
-      alert("Not enough wallet balance");
-      return;
-    }
-
-    const updatedUser = {
-      ...user,
-      wallet: user.wallet - t.fee,
-      joinedM: [...user.joinedM, t._id]
-    };
-
-    const updatedMatch = {
-      ...t,
-      joined: t.joined + 1,
-      joinedP: [...t.joinedP.map(p => p._id || p), user._id]
-    };
+    updatedMatch.joined = Number(updatedMatch.joined) + 1;
 
     try {
+      await updMatch(updatedMatch._id, updatedMatch);
       await updUser(user._id, updatedUser);
-      await updMatch(t._id, updatedMatch);
 
-      setuser(updatedUser);
-      setmatchs(prev =>
-        prev.map(item => (item._id === t._id ? updatedMatch : item))
-      );
+      setMatches((prev) => prev.map((m) => (m._id === selectedMatch._id ? updatedMatch : m)));
+      setUser(updatedUser);
 
-      alert("Joined Successfully!");
-    } catch (error) {
-      alert("Join failed");
-      console.log("failed problem", error);
+      alert(mode === "join" ? "Joined team successfully!" : "Team created & joined successfully!");
+      handleCloseModal();
+    } catch (err) {
+      console.log(err);
+      alert("Failed to join match");
     }
   };
 
   return (
-    <section className="relative bg-[#0d0d0d] py-16 px-6 md:px-10 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-950/50 via-[#0d0d0d] to-gray-950/50 pointer-events-none" />
-
-      <div className="relative z-10 max-w-7xl mx-auto">
+    <div className="py-16 px-6 md:px-10">
+      <div>
+        {/* Header */}
         <Reveal>
-          <div
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-12"
-          >
-            <p className="text-[#00e5ff] text-sm font-semibold uppercase tracking-widest mb-2">
-              Join Competition
-            </p>
-            <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-tight">
-              Find Your Next
-              <span className="ml-3 bg-gradient-to-r from-[#e50914] to-[#ff6b6b] bg-clip-text text-transparent">
-                Match
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12">
+            <div>
+              <p className="text-[#00e5ff] text-sm font-semibold uppercase tracking-widest mb-2">
+                Featured
+              </p>
+              <h2
+                className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-tight"
+              >
+                Upcoming
+                <span
+                  className="ml-3 block md:inline"
+                  style={{ color: ACCENT, textShadow: "0 0 20px rgba(229,9,20,0.5)" }}
+                >
+                  Match
+                </span>
+              </h2>
+              <p className="text-gray-400 text-sm mt-3 max-w-2xl">
+                Join competitive gaming events and showcase your skills on the grand stage
+              </p>
+            </div>
+
+            <Link to="/match">
+              <span className="text-sm text-white/90 px-5 py-2.5 rounded-lg border border-[#e50914]/30 hover:border-[#e50914] hover:bg-[#e50914]/10 transition-all font-semibold">
+                View all →
               </span>
-            </h2>
+            </Link>
           </div>
         </Reveal>
 
-        <Reveal>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10">
-            {/* LEFT FORM CARD */}
+        {/* Matches Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {matches.map((item) => (
             <div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="h-fit"
+              key={item._id}
+              className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden group hover:border-red-600/50 transition-all duration-300"
             >
-              <div
-                className="rounded-2xl bg-gradient-to-b from-gray-900/80 to-gray-950/80 p-8 md:p-10 border border-white/10 backdrop-blur-sm
-                shadow-[0_0_30px_rgba(0,0,0,0.4)] hover:border-[#e50914]/50 transition-all duration-300"
-              >
-                <div className="flex items-center gap-3 mb-8">
-                  <h3 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-                    Join the
-                    <span className="ml-2 text-[#e50914]">Match</span>
-                  </h3>
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-xl font-bold group-hover:text-red-500 text-white transition-colors tracking-tight">
+                      {item.name}
+                    </h3>
+                    <span className="text-blue-500 text-xs font-bold uppercase tracking-widest">
+                      {item.status}
+                    </span>
+                  </div>
+
+                  <div className="bg-neutral-800 px-3 py-1 rounded text-xs font-mono text-neutral-400 flex items-center gap-2">
+                    <FaClock className="text-red-500" /> {item.time}
+                  </div>
                 </div>
 
-                <form className="flex flex-col gap-6">
-                  {/* GAME */}
-                  <div className="flex flex-col gap-3">
-                    <label
-                      htmlFor="game"
-                      className="text-sm font-semibold text-[#00e5ff] uppercase tracking-wide"
-                    >
-                      Select Game
-                    </label>
-                    <select
-                      id="game"
-                      className="border border-white/20 bg-gray-900/80 text-white px-4 py-3 rounded-xl
-                      focus:outline-none focus:ring-2 focus:ring-[#e50914]/50 focus:border-[#e50914]
-                      hover:border-[#00e5ff]/50 transition-all duration-300 font-medium"
-                    >
-                      <option value="">Valorant</option>
-                      <option value="bgmi">BGMI</option>
-                      <option value="cs2">CS2</option>
-                      <option value="dota">Dota 2</option>
-                    </select>
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  <div>
+                    <span className="text-neutral-500 text-[10px] uppercase font-bold tracking-wider">
+                      Entry Fee
+                    </span>
+                    <span className="flex items-center gap-1.5 text-white font-bold">
+                      <FaDollarSign className="text-red-500 text-xs" />
+                      {item.fee}
+                    </span>
                   </div>
 
-                  {/* USERNAME */}
-                  <div className="flex flex-col gap-3">
-                    <label
-                      htmlFor="username"
-                      className="text-sm font-semibold text-[#00e5ff] uppercase tracking-wide"
-                    >
-                      Your Username
-                    </label>
-                    <input
-                      id="username"
-                      type="text"
-                      placeholder="Enter your in-game username"
-                      className="border border-white/20 bg-gray-900/80 text-white px-4 py-3 rounded-xl placeholder-gray-500
-                      focus:outline-none focus:ring-2 focus:ring-[#e50914]/50 focus:border-[#e50914]
-                      hover:border-[#00e5ff]/50 transition-all duration-300 font-medium"
-                    />
+                  <div>
+                    <span className="text-neutral-500 text-[10px] uppercase font-bold tracking-wider">
+                      Prize Pool
+                    </span>
+                    <span className="flex items-center gap-1.5 text-white font-bold">
+                      <FaTrophy className="text-yellow-500 text-xs" />
+                      {item.prize}
+                    </span>
                   </div>
 
-                  {/* RANK */}
-                  <div className="flex flex-col gap-3">
-                    <label
-                      htmlFor="rank"
-                      className="text-sm font-semibold text-[#00e5ff] uppercase tracking-wide"
-                    >
-                      Your Rank
-                    </label>
-                    <select
-                      id="rank"
-                      className="border border-white/20 bg-gray-900/80 text-white px-4 py-3 rounded-xl
-                      focus:outline-none focus:ring-2 focus:ring-[#e50914]/50 focus:border-[#e50914]
-                      hover:border-[#00e5ff]/50 transition-all duration-300 font-medium"
-                    >
-                      <option value="">Select Rank</option>
-                      <option value="beginner">Beginner</option>
-                      <option value="intermediate">Intermediate</option>
-                      <option value="advanced">Advanced</option>
-                      <option value="pro">Pro</option>
-                    </select>
+                  <div>
+                    <span className="text-neutral-500 text-[10px] uppercase font-bold tracking-wider">
+                      Mode
+                    </span>
+                    <span className="flex items-center gap-1.5 text-white font-bold">
+                      <FaUsers className="text-blue-500 text-xs" />
+                      {item.mode}
+                    </span>
                   </div>
+                </div>
+                <button
+                  onClick={() => handleOpenModal(item)}
+                  disabled={user && item.teams.some(team => team.members.includes(user._id))}
+                  className={`w-full py-3 font-black rounded-lg transition-all active:scale-[0.98] shadow-lg ${user && item.teams.some(team => team.members.includes(user._id))
+                      ? "bg-gray-500 cursor-not-allowed"
+                      : "bg-red-600 hover:bg-red-700 shadow-red-900/20"
+                    } text-white`}
+                >
+                  {user && item.teams.some(team => team.members.includes(user._id)) ? "Joined" : "Join Tournament"}
+                </button>
 
-                  {/* TERMS */}
-                  <div className="flex items-center gap-3 select-none">
-                    <input
-                      type="checkbox"
-                      id="terms"
-                      className="accent-[#e50914] w-5 h-5 cursor-pointer rounded transition-all"
-                    />
-                    <label htmlFor="terms" className="text-sm text-gray-300 cursor-pointer">
-                      I agree to the{" "}
-                      <span className="text-[#00e5ff] font-semibold hover:underline">
-                        terms and conditions
-                      </span>
-                    </label>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="mt-4 w-full bg-gradient-to-r from-[#e50914] to-[#ff6b6b] hover:from-[#d40812] hover:to-[#ff4444]
-                      text-white text-lg font-black py-4 rounded-xl shadow-[0_0_15px_rgba(229,9,20,0.6)]
-                      transition-all duration-300 tracking-tight uppercase"
-                  >
-                    Find Match
-                  </button>
-                </form>
+                {/* 
+                <button
+                  onClick={() => handleOpenModal(item)}
+                  className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-black rounded-lg transition-all active:scale-[0.98] shadow-lg shadow-red-900/20"
+                >
+                  Join Tournament
+                </button> */}
               </div>
             </div>
-
-            {/* RIGHT MATCHES */}
-            <div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="h-fit"
-            >
-              <div className="mb-6">
-                <h3 className="text-3xl font-black text-white tracking-tight mb-2">
-                  <span className="text-[#00e5ff]">Upcoming</span> Matches
-                </h3>
-                <p className="text-gray-400 text-sm">Find and join live tournaments</p>
-              </div>
-
-              <div className="space-y-4 md:space-y-5">
-                {matchs.slice(0,3).map((match, id) => {
-                  const hasJoined = joined.some(j => j === match._id || j._id === match._id);
-                  return (
-                    <div
-                      key={id}
-                      className="rounded-2xl bg-gradient-to-b from-gray-900/80 to-gray-950/80 p-5 md:p-6 border border-white/10
-                      shadow-[0_0_20px_rgba(0,0,0,0.3)] hover:border-[#e50914]/50 transition-all duration-300 group"
-                    >
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="text-xl font-black text-white tracking-tight">
-                              {match.game}
-                            </h4>
-                          </div>
-                          <p className="text-xs text-[#00e5ff] font-semibold uppercase tracking-wider">
-                            {match.mode}
-                          </p>
-                        </div>
-
-                        <span className="inline-block px-3 py-1 rounded-lg bg-[#e50914]/20 border border-[#e50914]/50 text-[#ff6b6b] font-black text-xs uppercase tracking-wider">
-                          {match.time}
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-2 md:gap-3 mb-4">
-                        <div className="bg-gray-900/60 rounded-xl p-3 border border-white/5">
-                          <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Map</p>
-                          <p className="text-sm font-bold text-white">{match.map}</p>
-                        </div>
-
-                        <div className="bg-gray-900/60 rounded-xl p-3 border border-white/5">
-                          <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Players</p>
-                          <p className="text-sm font-bold text-[#00e5ff]">
-                            {match.joined}/{match.total}
-                          </p>
-                        </div>
-
-                        <div className="bg-gray-900/60 rounded-xl p-3 border border-white/5">
-                          <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Prize</p>
-                          <p className="text-sm font-bold text-[#e50914]">{match.prize}</p>
-                        </div>
-                      </div>
-
-                      <button
-                        disabled={hasJoined || match.status !== "upcomming"}
-                        onClick={e => {
-                          e.stopPropagation();
-                          handlejoin(match);
-                        }}
-                        className={`w-full py-2 rounded-lg text-sm font-bold uppercase ${hasJoined
-                          || match.status !== "upcomming"
-                          ? "bg-gray-500 cursor-not-allowed"
-                          : "bg-gradient-to-r from-[#e50914] to-red-700 text-white"
-                          }`}
-                      >
-                        {match.status === "upcomming"
-                          ? hasJoined
-                            ? "Joined"
-                            : "Join"
-                          : "Not available"}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-
-            </div>
-          </div>
-        </Reveal>
+          ))}
+        </div>
       </div>
-    </section>
+
+      {/* Modal */}
+      {isModalOpen && selectedMatch && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
+          <div className="bg-neutral-900 border border-neutral-800 w-full max-w-md rounded-2xl p-8 relative shadow-2xl">
+            <button
+              onClick={handleCloseModal}
+              className="absolute top-4 right-4 text-neutral-500 hover:text-white transition-colors"
+            >
+              <FaTimes size={20} />
+            </button>
+
+            {step === 1 ? (
+              <div className="text-center text-white">
+                <div className="w-16 h-16 bg-red-600/10 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <FaGamepad size={30} />
+                </div>
+                <h3 className="text-2xl font-black mb-2">Join Confirmation</h3>
+                <p className="text-neutral-400 mb-8 text-sm">
+                  Review match rules before confirming your registration.
+                </p>
+                <button
+                  onClick={() => setStep(2)}
+                  className="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-black rounded-xl shadow-lg shadow-red-900/40"
+                >
+                  Confirm Registration
+                </button>
+              </div>
+            ) : (
+              <div>
+                <div className="flex gap-4 mb-6">
+                  <button
+                    className={`flex-1 py-2 rounded-xl font-bold ${mode === "create" ? "bg-red-600 text-white" : "bg-neutral-800 text-neutral-400"
+                      }`}
+                    onClick={() => setMode("create")}
+                  >
+                    Create Team
+                  </button>
+                  <button
+                    className={`flex-1 py-2 rounded-xl font-bold ${mode === "join" ? "bg-red-600 text-white" : "bg-neutral-800 text-neutral-400"
+                      }`}
+                    onClick={() => setMode("join")}
+                  >
+                    Join Team
+                  </button>
+                </div>
+
+                {mode === "create" ? (
+                  <div className="mb-6">
+                    <label className="text-[10px] font-bold uppercase text-neutral-500 mb-2 block tracking-widest">
+                      Enter Squad Name
+                    </label>
+                    <input
+                      type="text"
+                      autoFocus
+                      value={teamName}
+                      onChange={(e) => setTeamName(e.target.value)}
+                      placeholder="E.g. RED_ZONE_ELITE"
+                      className="w-full bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                    />
+                  </div>
+                ) : (
+                  <div className="mb-6">
+                    <label className="text-[10px] font-bold uppercase text-neutral-500 mb-2 block tracking-widest">
+                      Enter Team Code
+                    </label>
+                    <input
+                      type="text"
+                      autoFocus
+                      value={teamCode}
+                      onChange={(e) => setTeamCode(e.target.value)}
+                      placeholder="E.g. ABC123"
+                      className="w-full bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                    />
+                  </div>
+                )}
+                {/* 
+                <button
+                  onClick={handleJoin}
+                  className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl transition-all disabled:opacity-30 disabled:grayscale"
+                >
+                  Finalize Entry
+                </button> */}
+                <button
+                  onClick={handleJoin}
+                  disabled={
+                    (mode === "create" && !teamName.trim()) ||
+                    (mode === "join" && !teamCode.trim()) ||
+                    selectedMatch.teams.some(team => team.members.includes(user._id))
+                  }
+                  className={`w-full py-4 ${selectedMatch.teams.some(team => team.members.includes(user._id))
+                    ? "bg-green-600 hover:bg-green-600"
+                    : "bg-blue-600 hover:bg-blue-700"
+                    } text-white font-black rounded-xl transition-all disabled:opacity-30 disabled:grayscale`}
+                >
+                  {selectedMatch.teams.some(team => team.members.includes(user._id)) ? "Joined" : "Finalize Entry"}
+                </button>
+
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
-}
+};
+
+export default Match;
